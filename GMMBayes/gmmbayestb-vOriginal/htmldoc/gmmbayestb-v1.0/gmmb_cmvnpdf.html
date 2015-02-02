@@ -1,0 +1,138 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of gmmb_cmvnpdf</title>
+  <meta name="keywords" content="gmmb_cmvnpdf">
+  <meta name="description" content="GMMB_CMVNPDF - Compute the value of Gaussian PDF (real or complex range)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">gmmbayestb-v1.0</a> &gt; gmmb_cmvnpdf.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for gmmbayestb-v1.0&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>gmmb_cmvnpdf
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>GMMB_CMVNPDF - Compute the value of Gaussian PDF (real or complex range)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function y = gmmb_cmvnpdf(X, Mu, Sigma) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">GMMB_CMVNPDF - Compute the value of Gaussian PDF (real or complex range)
+
+     Y = GMMB_CMVNPDF(X, MU, SIGMA)
+     Computes the D-dimensional (complex) Gaussian PDF with parameters
+     MU and SIGMA in points X(i,:) -&gt; Y(i), i=1..N.
+     X:     N x D matrix of row vectors
+     MU:    1 x D vector
+     SIGMA: D x D matrix
+     SIGMA is assumed complex conjugate symmetric and semi-positive definite.
+        (You can use CHOL to test it, or gmmb_covfixer.)
+
+    This is a dual function with different formulas whether MU is
+    complex variable or not.
+
+    NOTE: This code is not based on the Matlab(r) mvnpdf.m and so
+    does not include the same sanity checks.
+
+ Author(s):
+    Pekka Paalanen &lt;pekka.paalanen@lut.fi&gt;
+    Joni Kamarainen &lt;Joni.Kamarainen@lut.fi&gt;
+
+ References:
+   [1] Albertazzi, G., Cioni, S., Corazza, G.E., Vanelli-Coralli, A.,
+    Turbo Code Performance over Fading Channels in S-UMTS,
+    Research Center on Advanced Electronic Systems for Information
+    and Communication Technologies, University of Bologna
+
+ Copyright:
+
+   Bayesian Classifier with Gaussian Mixture Model Pdf is
+   Copyright (C) 2003, 2004 by Pekka Paalanen and Joni-Kristian
+   Kamarainen.
+
+   $Name:  $ $Revision: 1.2 $  $Date: 2004/11/02 09:00:18 $</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="gmmb_em.html" class="code" title="function [estimate, varargout] = gmmb_em(data, varargin);">gmmb_em</a>	GMMB_EM     - EM estimated GMM parameters</li><li><a href="gmmb_fj.html" class="code" title="function [estimate, varargout] = gmmb_fj(data, varargin);">gmmb_fj</a>	GMMB_FJ     - Figueiredo-Jain estimated GMM parameters</li><li><a href="gmmb_pdf.html" class="code" title="function [pdf] = gmmb_pdf(data_, bayesS_);">gmmb_pdf</a>	GMMB_PDF    - (Complex range) multivariate Gaussian mixture model pdf</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">%GMMB_CMVNPDF - Compute the value of Gaussian PDF (real or complex range)</span>
+0002 <span class="comment">%</span>
+0003 <span class="comment">%     Y = GMMB_CMVNPDF(X, MU, SIGMA)</span>
+0004 <span class="comment">%     Computes the D-dimensional (complex) Gaussian PDF with parameters</span>
+0005 <span class="comment">%     MU and SIGMA in points X(i,:) -&gt; Y(i), i=1..N.</span>
+0006 <span class="comment">%     X:     N x D matrix of row vectors</span>
+0007 <span class="comment">%     MU:    1 x D vector</span>
+0008 <span class="comment">%     SIGMA: D x D matrix</span>
+0009 <span class="comment">%     SIGMA is assumed complex conjugate symmetric and semi-positive definite.</span>
+0010 <span class="comment">%        (You can use CHOL to test it, or gmmb_covfixer.)</span>
+0011 <span class="comment">%</span>
+0012 <span class="comment">%    This is a dual function with different formulas whether MU is</span>
+0013 <span class="comment">%    complex variable or not.</span>
+0014 <span class="comment">%</span>
+0015 <span class="comment">%    NOTE: This code is not based on the Matlab(r) mvnpdf.m and so</span>
+0016 <span class="comment">%    does not include the same sanity checks.</span>
+0017 <span class="comment">%</span>
+0018 <span class="comment">% Author(s):</span>
+0019 <span class="comment">%    Pekka Paalanen &lt;pekka.paalanen@lut.fi&gt;</span>
+0020 <span class="comment">%    Joni Kamarainen &lt;Joni.Kamarainen@lut.fi&gt;</span>
+0021 <span class="comment">%</span>
+0022 <span class="comment">% References:</span>
+0023 <span class="comment">%   [1] Albertazzi, G., Cioni, S., Corazza, G.E., Vanelli-Coralli, A.,</span>
+0024 <span class="comment">%    Turbo Code Performance over Fading Channels in S-UMTS,</span>
+0025 <span class="comment">%    Research Center on Advanced Electronic Systems for Information</span>
+0026 <span class="comment">%    and Communication Technologies, University of Bologna</span>
+0027 <span class="comment">%</span>
+0028 <span class="comment">% Copyright:</span>
+0029 <span class="comment">%</span>
+0030 <span class="comment">%   Bayesian Classifier with Gaussian Mixture Model Pdf is</span>
+0031 <span class="comment">%   Copyright (C) 2003, 2004 by Pekka Paalanen and Joni-Kristian</span>
+0032 <span class="comment">%   Kamarainen.</span>
+0033 <span class="comment">%</span>
+0034 <span class="comment">%   $Name:  $ $Revision: 1.2 $  $Date: 2004/11/02 09:00:18 $</span>
+0035 <span class="comment">%</span>
+0036 
+0037 <a name="_sub0" href="#_subfunctions" class="code">function y = gmmb_cmvnpdf(X, Mu, Sigma)</a>
+0038 
+0039 <span class="comment">% Get size of data.</span>
+0040 [n,d] = size(X);
+0041 
+0042 invSigma = inv(Sigma);
+0043 
+0044 invSigmaMu = invSigma*Mu';
+0045 
+0046 sumvec = sum((X*invSigma).*conj(X),2);
+0047 
+0048 sqrdist = sumvec <span class="keyword">...</span>
+0049     - X*invSigmaMu <span class="keyword">...</span>
+0050     - ((Mu*invSigma)*X').' <span class="keyword">...</span>
+0051     + Mu*invSigmaMu;
+0052 
+0053 invDetSigma = 1/real(det(Sigma));
+0054 
+0055 <span class="keyword">if</span> isreal(Mu)
+0056     y = sqrt( (2*pi)^(-d) * invDetSigma ) .* exp(-0.5*real(sqrdist));
+0057 <span class="keyword">else</span>
+0058     y = ( pi^(-d) * invDetSigma ) .* exp(-real(sqrdist));
+0059 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Thu 14-Apr-2005 13:50:22 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

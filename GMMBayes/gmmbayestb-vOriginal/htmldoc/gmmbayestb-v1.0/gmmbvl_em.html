@@ -1,0 +1,264 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of gmmbvl_em</title>
+  <meta name="keywords" content="gmmbvl_em">
+  <meta name="description" content="gmmbvl_em - EM algorithm for adaptive multivariate Gaussian mixtures">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">gmmbayestb-v1.0</a> &gt; gmmbvl_em.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for gmmbayestb-v1.0&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>gmmbvl_em
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>gmmbvl_em - EM algorithm for adaptive multivariate Gaussian mixtures</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [W,M,R,varargout] = gmmbvl_em(X,kmax,nr_of_cand,plo,dia, logging) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> gmmbvl_em - EM algorithm for adaptive multivariate Gaussian mixtures
+
+[W,M,R,stats] = gmmbvl_em(X,kmax,nr_of_cand,plo,dia, logging)
+  X     - (n x d) d-dimensional zero-mean unit-variance data
+  kmax  - maximum number of components allowed
+  nr_of_cand - number of candidates per component, zero gives non-greedy EM
+  plo   - if 1 then plot ellipses for 2-d data
+  dia   - if 1 then print diagnostics
+  logging - logging level, see gmmb_gem.m
+returns
+  W - (k x 1) vector of mixing weights
+  M - (k x d) matrix of components means
+  R - (k x d^2) matrix of Cholesky submatrices of components covariances
+      in vector reshaped format. To get the covariance of component k:
+      Rk = reshape(R(k,:),d,d); S = Rk'*Rk;
+  stats - (optional) the log, see gmmb_gem.m
+
+ Nikos Vlassis &amp; Sjaak Verbeek, oct 2002
+ see greedy-EM paper at http://www.science.uva.nl/~vlassis/publications</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="gmmbvl_em_gauss.html" class="code" title="function L = gmmbvl_em_gauss(X,M,R)">gmmbvl_em_gauss</a>	gmmbvl_em_gauss - compute likelihoods for all points and all components</li><li><a href="gmmbvl_em_init_km.html" class="code" title="function [W,M,R,P,sigma] = gmmbvl_em_init_km(X,k,dyn)">gmmbvl_em_init_km</a>	gmmbvl_em_init_km - initialization of EM for Gaussian mixtures</li><li><a href="gmmbvl_em_step.html" class="code" title="function [W,M,R] = gmmbvl_em_step(X,W,M,R,P,plo)">gmmbvl_em_step</a>	gmmbvl_em_step - EM learning step for multivariate Gaussian mixtures</li><li><a href="gmmbvl_rand_split.html" class="code" title="function [Mus, Covs, Ws]=gmmbvl_rand_split(P,X,M,R,sigma,F,W,nr_of_cand)">gmmbvl_rand_split</a>	</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="gmmb_gem.html" class="code" title="function [estimate, varargout] = gmmb_gem(data, varargin);">gmmb_gem</a>	GMMB_GEM    - Greedy EM estimated GMM parameters</li><li><a href="gmmbvl_demo1d.html" class="code" title="">gmmbvl_demo1d</a>	$Name:  $</li><li><a href="gmmbvl_demo2d.html" class="code" title="">gmmbvl_demo2d</a>	$Name:  $</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [W,M,R,varargout] = gmmbvl_em(X,kmax,nr_of_cand,plo,dia, logging)</a>
+0002 <span class="comment">% gmmbvl_em - EM algorithm for adaptive multivariate Gaussian mixtures</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">%[W,M,R,stats] = gmmbvl_em(X,kmax,nr_of_cand,plo,dia, logging)</span>
+0005 <span class="comment">%  X     - (n x d) d-dimensional zero-mean unit-variance data</span>
+0006 <span class="comment">%  kmax  - maximum number of components allowed</span>
+0007 <span class="comment">%  nr_of_cand - number of candidates per component, zero gives non-greedy EM</span>
+0008 <span class="comment">%  plo   - if 1 then plot ellipses for 2-d data</span>
+0009 <span class="comment">%  dia   - if 1 then print diagnostics</span>
+0010 <span class="comment">%  logging - logging level, see gmmb_gem.m</span>
+0011 <span class="comment">%returns</span>
+0012 <span class="comment">%  W - (k x 1) vector of mixing weights</span>
+0013 <span class="comment">%  M - (k x d) matrix of components means</span>
+0014 <span class="comment">%  R - (k x d^2) matrix of Cholesky submatrices of components covariances</span>
+0015 <span class="comment">%      in vector reshaped format. To get the covariance of component k:</span>
+0016 <span class="comment">%      Rk = reshape(R(k,:),d,d); S = Rk'*Rk;</span>
+0017 <span class="comment">%  stats - (optional) the log, see gmmb_gem.m</span>
+0018 <span class="comment">%</span>
+0019 <span class="comment">% Nikos Vlassis &amp; Sjaak Verbeek, oct 2002</span>
+0020 <span class="comment">% see greedy-EM paper at http://www.science.uva.nl/~vlassis/publications</span>
+0021 
+0022 <span class="comment">%</span>
+0023 <span class="comment">% $Name:  $</span>
+0024 
+0025 THRESHOLD = 1e-5;
+0026 
+0027 [n,d] = size(X);
+0028 n1=ones(n,1);
+0029 d1=ones(1,d);
+0030 
+0031 
+0032 <span class="keyword">if</span> d &gt; 2
+0033     plo = 0;
+0034 <span class="keyword">end</span>
+0035 
+0036 <span class="keyword">if</span> plo
+0037     figure(1);
+0038     set(1,<span class="string">'Double'</span>,<span class="string">'on'</span>);
+0039 <span class="keyword">end</span>
+0040 
+0041 <span class="keyword">if</span> nr_of_cand 
+0042     k = 1;
+0043     <span class="keyword">if</span> dia
+0044         fprintf(<span class="string">'Greedy '</span>);
+0045     <span class="keyword">end</span>
+0046 <span class="keyword">else</span> 
+0047     k = kmax;
+0048     <span class="keyword">if</span> dia
+0049         fprintf(<span class="string">'Non-greedy '</span>);
+0050     <span class="keyword">end</span>
+0051 <span class="keyword">end</span>
+0052 
+0053 <span class="keyword">if</span> dia
+0054     fprintf(<span class="string">'EM initialization\n'</span>);
+0055 <span class="keyword">end</span>
+0056 
+0057 <span class="comment">% logging</span>
+0058 <span class="keyword">if</span> nargout == 4
+0059     varargout{1} = [];
+0060 <span class="keyword">end</span>
+0061 log_loglikes = {};
+0062 full_em_loops = 0;
+0063 part_em_loops = 0;
+0064 
+0065 
+0066 [W,M,R,P,sigma] = <a href="gmmbvl_em_init_km.html" class="code" title="function [W,M,R,P,sigma] = gmmbvl_em_init_km(X,k,dyn)">gmmbvl_em_init_km</a>(X,k,0);
+0067 sigma=sigma^2;
+0068 
+0069 oldlogl = -realmax;
+0070 
+0071 <span class="keyword">while</span> 1
+0072     <span class="comment">% apply EM steps to the complete mixture until convergence</span>
+0073     <span class="keyword">if</span> dia
+0074         fprintf(<span class="string">'EM steps'</span>);
+0075     <span class="keyword">end</span>
+0076     
+0077     <span class="keyword">while</span> 1
+0078         [W,M,R] = <a href="gmmbvl_em_step.html" class="code" title="function [W,M,R] = gmmbvl_em_step(X,W,M,R,P,plo)">gmmbvl_em_step</a>(X,W,M,R,P,plo);
+0079         full_em_loops = full_em_loops+1;
+0080         
+0081         <span class="keyword">if</span> dia
+0082             fprintf(<span class="string">'.'</span>);
+0083         <span class="keyword">end</span>
+0084         
+0085         <span class="comment">% likelihoods L (n x k) for all inputs and all components</span>
+0086         L = <a href="gmmbvl_em_gauss.html" class="code" title="function L = gmmbvl_em_gauss(X,M,R)">gmmbvl_em_gauss</a>(X,M,R);
+0087         <span class="comment">% mixture F (n x 1) and average log-likelihood</span>
+0088         F = L * W;
+0089         F(find(F &lt; realmin)) = realmin;
+0090         logl = mean(log(F)); 
+0091         
+0092         <span class="comment">% posteriors P (n x k) and their sums</span>
+0093         P = L .* (ones(n,1)*W')  ./ (F*ones(1,k));
+0094         
+0095         <span class="keyword">if</span> logging &gt; 0
+0096             log_loglikes{full_em_loops+part_em_loops} = <span class="keyword">...</span>
+0097                    sum(log(F));
+0098         <span class="keyword">end</span>
+0099         
+0100         <span class="keyword">if</span> abs(logl/oldlogl-1) &lt; THRESHOLD
+0101             <span class="keyword">if</span> dia
+0102                 fprintf(<span class="string">'\n'</span>);
+0103                 fprintf(<span class="string">'Logl = %g\n'</span>, logl);
+0104             <span class="keyword">end</span>
+0105             <span class="keyword">break</span>;
+0106         <span class="keyword">end</span>
+0107         oldlogl = logl;
+0108     <span class="keyword">end</span>
+0109 
+0110     <span class="keyword">if</span> k == kmax;
+0111         <span class="keyword">break</span>;
+0112     <span class="keyword">end</span>
+0113 
+0114     <span class="keyword">if</span> dia
+0115         fprintf(<span class="string">'Trying component allocation'</span>);
+0116     <span class="keyword">end</span>
+0117 
+0118     [Mnew,Rnew,alpha] = <a href="gmmbvl_rand_split.html" class="code" title="function [Mus, Covs, Ws]=gmmbvl_rand_split(P,X,M,R,sigma,F,W,nr_of_cand)">gmmbvl_rand_split</a>(P,X,M,R,sigma,F,W,nr_of_cand); 
+0119     <span class="keyword">if</span> alpha==0
+0120         <span class="keyword">break</span>;
+0121     <span class="keyword">end</span>
+0122 
+0123 
+0124     K                 = <a href="gmmbvl_em_gauss.html" class="code" title="function L = gmmbvl_em_gauss(X,M,R)">gmmbvl_em_gauss</a>(X,Mnew,Rnew);
+0125     PP                = F*(1-alpha)+K*alpha;
+0126     LOGL              = mean(log(PP));
+0127 
+0128     <span class="comment">% optimize new mixture with partial EM steps updating only Mnew,Rnew</span>
+0129     veryoldlogl = logl;
+0130     oldlogl = LOGL;
+0131     done_here=0;
+0132     
+0133     Pnew = (K.*(ones(n,1)*alpha))./PP;
+0134     
+0135     <span class="keyword">while</span> ~done_here
+0136         <span class="keyword">if</span> dia
+0137             fprintf(<span class="string">'*'</span>);
+0138         <span class="keyword">end</span>
+0139 
+0140         [alpha,Mnew,Rnew] = <a href="gmmbvl_em_step.html" class="code" title="function [W,M,R] = gmmbvl_em_step(X,W,M,R,P,plo)">gmmbvl_em_step</a>(X,alpha,Mnew,Rnew,Pnew,0);
+0141         part_em_loops = part_em_loops+1;
+0142         
+0143         K    = <a href="gmmbvl_em_gauss.html" class="code" title="function L = gmmbvl_em_gauss(X,M,R)">gmmbvl_em_gauss</a>(X,Mnew,Rnew);
+0144         
+0145         Fnew = F*(1-alpha)+K*alpha;
+0146         Pnew = K*alpha./Fnew;
+0147         logl = mean(log(Fnew));
+0148         
+0149         <span class="keyword">if</span> logging &gt; 0
+0150             log_loglikes{full_em_loops+part_em_loops} = <span class="keyword">...</span>
+0151                    sum(log(Fnew));
+0152         <span class="keyword">end</span>
+0153 
+0154         <span class="keyword">if</span> abs(logl/oldlogl-1)&lt;THRESHOLD
+0155             done_here=1;
+0156         <span class="keyword">end</span>
+0157         
+0158         oldlogl=logl;
+0159     <span class="keyword">end</span>
+0160     <span class="comment">% check if log-likelihood increases with insertion</span>
+0161     <span class="keyword">if</span> logl &lt;= veryoldlogl
+0162         <span class="keyword">if</span> dia
+0163             fprintf(<span class="string">'Mixture uses only %d components\n'</span>, k);
+0164         <span class="keyword">end</span>
+0165         
+0166         <span class="keyword">break</span>;
+0167     <span class="keyword">end</span>
+0168 
+0169     <span class="comment">% allocate new component</span>
+0170     M = [M; Mnew];
+0171     R = [R; Rnew];
+0172     W = [(1-alpha)*W; alpha];
+0173     k = k + 1;
+0174 
+0175     <span class="keyword">if</span> dia
+0176         fprintf(<span class="string">' k = %d\n'</span>, k);
+0177         fprintf(<span class="string">'LogL = %g\n'</span>, logl);
+0178     <span class="keyword">end</span>
+0179 
+0180     <span class="comment">% prepare next EM step</span>
+0181     L = <a href="gmmbvl_em_gauss.html" class="code" title="function L = gmmbvl_em_gauss(X,M,R)">gmmbvl_em_gauss</a>(X,M,R);
+0182     F = L * W;
+0183     F(find(F&lt;realmin))=realmin;
+0184     P = L .* (ones(n,1)*W')  ./ (F*ones(1,k));
+0185 <span class="keyword">end</span>
+0186 
+0187 
+0188 <span class="keyword">if</span> logging &gt; 1
+0189     varargout{1} = struct( <span class="keyword">...</span>
+0190         <span class="string">'iterations'</span>, {full_em_loops + part_em_loops}, <span class="keyword">...</span>
+0191         <span class="string">'loglikes'</span>, {cat(1,log_loglikes{:})} <span class="keyword">...</span>
+0192        );
+0193 <span class="keyword">end</span>
+0194 <span class="keyword">if</span> logging == 1
+0195     varargout{1} = struct( <span class="keyword">...</span>
+0196         <span class="string">'iterations'</span>, {full_em_loops + part_em_loops}, <span class="keyword">...</span>
+0197         <span class="string">'loglikes'</span>, {cat(1,log_loglikes{:})} <span class="keyword">...</span>
+0198        );
+0199 <span class="keyword">end</span>
+0200</pre></div>
+<hr><address>Generated on Thu 14-Apr-2005 13:50:22 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

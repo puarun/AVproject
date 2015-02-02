@@ -1,0 +1,126 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of gmmb_fracthresh</title>
+  <meta name="keywords" content="gmmb_fracthresh">
+  <meta name="description" content="GMMB_FRACTHRESH    Threshold PDF values according to density quantile.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">gmmbayestb-v1.0</a> &gt; gmmb_fracthresh.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for gmmbayestb-v1.0&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>gmmb_fracthresh
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>GMMB_FRACTHRESH    Threshold PDF values according to density quantile.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function mask = gmmb_fracthresh(pdfmat, histS, thr); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">GMMB_FRACTHRESH    Threshold PDF values according to density quantile.
+
+     MASK = GMMB_FRACTHRESH(pdfmat, histS, thr)
+
+     pdfmat = N x K matrix of PDF values at N points
+              in K different PDFs (the output of gmmb_pdf)
+     histS = the histS structure (1 x K cell array) created with
+             the bayesS structure that was used to compute PDFs.
+     thr = scalar in the range [0, 1], the density quantile
+
+     MASK = N x K logical matrix
+
+     See also <a href="gmmb_pdf.html" class="code" title="function [pdf] = gmmb_pdf(data_, bayesS_);">GMMB_PDF</a>, <a href="gmmb_hist.html" class="code" title="function histS = gmmb_hist(data_, type_, bayesS);">GMMB_HIST</a>, <a href="gmmb_generatehist.html" class="code" title="function histS = gmmb_generatehist(bayesS, N);">GMMB_GENERATEHIST</a>.
+
+  The recommended way to create histS is with <a href="gmmb_generatehist.html" class="code" title="function histS = gmmb_generatehist(bayesS, N);">gmmb_generatehist</a>.
+  The output is a logical N x K matrix that tells whether point N
+  is an outlier in distribution K, i.e., it does not belong to the
+  thr-quantile of distribution K.
+
+ References:
+   [1] Paalanen, P., Kamarainen, J.-K., Ilonen, J., Kälviäinen, H.,
+    Feature Representation and Discrimination Based on Gaussian Mixture Model
+    Probability Densities - Practices and Algorithms, Research Report 95,
+    Lappeenranta University of Technology, Department of Information
+    Technology, 2005.
+
+ Author(s):
+    Pekka Paalanen &lt;pekka.paalanen@lut.fi&gt;
+
+ Copyright:
+
+   Bayesian Classifier with Gaussian Mixture Model Pdf
+   functionality is Copyright (C) 2003, 2004 by Pekka Paalanen and
+   Joni-Kristian Kamarainen.
+
+   $Name:  $ $Revision: 1.2 $  $Date: 2005/04/14 10:33:34 $</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="gmmb_frac2lhood.html" class="code" title="function lhood = gmmb_frac2lhood(histS, f);">gmmb_frac2lhood</a>	GMMB_FRAC2LHOOD   Map density quantiles to PDF threshold values</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="gmmb_demo01.html" class="code" title="function [] = gmmb_demo01;">gmmb_demo01</a>	GMMB_DEMO01   Demostrate GMMBayes mixture learning and data classification.</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">%GMMB_FRACTHRESH    Threshold PDF values according to density quantile.</span>
+0002 <span class="comment">%</span>
+0003 <span class="comment">%     MASK = GMMB_FRACTHRESH(pdfmat, histS, thr)</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">%     pdfmat = N x K matrix of PDF values at N points</span>
+0006 <span class="comment">%              in K different PDFs (the output of gmmb_pdf)</span>
+0007 <span class="comment">%     histS = the histS structure (1 x K cell array) created with</span>
+0008 <span class="comment">%             the bayesS structure that was used to compute PDFs.</span>
+0009 <span class="comment">%     thr = scalar in the range [0, 1], the density quantile</span>
+0010 <span class="comment">%</span>
+0011 <span class="comment">%     MASK = N x K logical matrix</span>
+0012 <span class="comment">%</span>
+0013 <span class="comment">%     See also GMMB_PDF, GMMB_HIST, GMMB_GENERATEHIST.</span>
+0014 <span class="comment">%</span>
+0015 <span class="comment">%  The recommended way to create histS is with gmmb_generatehist.</span>
+0016 <span class="comment">%  The output is a logical N x K matrix that tells whether point N</span>
+0017 <span class="comment">%  is an outlier in distribution K, i.e., it does not belong to the</span>
+0018 <span class="comment">%  thr-quantile of distribution K.</span>
+0019 <span class="comment">%</span>
+0020 <span class="comment">% References:</span>
+0021 <span class="comment">%   [1] Paalanen, P., Kamarainen, J.-K., Ilonen, J., Kälviäinen, H.,</span>
+0022 <span class="comment">%    Feature Representation and Discrimination Based on Gaussian Mixture Model</span>
+0023 <span class="comment">%    Probability Densities - Practices and Algorithms, Research Report 95,</span>
+0024 <span class="comment">%    Lappeenranta University of Technology, Department of Information</span>
+0025 <span class="comment">%    Technology, 2005.</span>
+0026 <span class="comment">%</span>
+0027 <span class="comment">% Author(s):</span>
+0028 <span class="comment">%    Pekka Paalanen &lt;pekka.paalanen@lut.fi&gt;</span>
+0029 <span class="comment">%</span>
+0030 <span class="comment">% Copyright:</span>
+0031 <span class="comment">%</span>
+0032 <span class="comment">%   Bayesian Classifier with Gaussian Mixture Model Pdf</span>
+0033 <span class="comment">%   functionality is Copyright (C) 2003, 2004 by Pekka Paalanen and</span>
+0034 <span class="comment">%   Joni-Kristian Kamarainen.</span>
+0035 <span class="comment">%</span>
+0036 <span class="comment">%   $Name:  $ $Revision: 1.2 $  $Date: 2005/04/14 10:33:34 $</span>
+0037 <span class="comment">%</span>
+0038 
+0039 <a name="_sub0" href="#_subfunctions" class="code">function mask = gmmb_fracthresh(pdfmat, histS, thr);</a>
+0040 
+0041 N = size(pdfmat, 1);
+0042 K = size(pdfmat, 2);
+0043 
+0044 thresh = <a href="gmmb_frac2lhood.html" class="code" title="function lhood = gmmb_frac2lhood(histS, f);">gmmb_frac2lhood</a>(histS, thr*ones(1,K));
+0045 mask = (pdfmat &lt; repmat(thresh, N, 1));</pre></div>
+<hr><address>Generated on Thu 14-Apr-2005 13:50:22 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

@@ -1,0 +1,176 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of gmmbvl_rand_split</title>
+  <meta name="keywords" content="gmmbvl_rand_split">
+  <meta name="description" content="">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">gmmbayestb-v1.0</a> &gt; gmmbvl_rand_split.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for gmmbayestb-v1.0&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>gmmbvl_rand_split
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong></strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [Mus, Covs, Ws]=gmmbvl_rand_split(P,X,M,R,sigma,F,W,nr_of_cand) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">
+ $Name:  $</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="gmmbvl_em_gauss.html" class="code" title="function L = gmmbvl_em_gauss(X,M,R)">gmmbvl_em_gauss</a>	gmmbvl_em_gauss - compute likelihoods for all points and all components</li><li><a href="gmmbvl_em_step_partial.html" class="code" title="function [W,M,R] = gmmbvl_em_step_partial(X,W,M,R,P,n_all,plo)">gmmbvl_em_step_partial</a>	</li><li><a href="gmmbvl_sqdist.html" class="code" title="function d = gmmbvl_sqdist(a,b)">gmmbvl_sqdist</a>	gmmbvl_sqdist - computes pairwise squared Euclidean distances between points</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="gmmbvl_em.html" class="code" title="function [W,M,R,varargout] = gmmbvl_em(X,kmax,nr_of_cand,plo,dia, logging)">gmmbvl_em</a>	gmmbvl_em - EM algorithm for adaptive multivariate Gaussian mixtures</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [Mus, Covs, Ws]=gmmbvl_rand_split(P,X,M,R,sigma,F,W,nr_of_cand)</a>
+0002 <span class="comment">%</span>
+0003 <span class="comment">% $Name:  $</span>
+0004 
+0005 k       = size(R,1);
+0006 [n,d]   = size(X);
+0007 
+0008 epsilon = 1e-2;      <span class="comment">% threshold in relative loglikelihood improvement for convergence in local partial EM</span>
+0009 
+0010 [tmp,I] = max(P,[],2);
+0011 
+0012 Mus = [];
+0013 Covs = [];
+0014 K = [];
+0015 Ws = [];
+0016 KL = [];
+0017 
+0018 
+0019 
+0020 <span class="keyword">for</span> i=1:k
+0021         
+0022     XI        = find(I==i);
+0023     Xloc      = X(XI,:);
+0024     start     = size(Mus,1);
+0025     j=0;
+0026 
+0027     <span class="keyword">if</span> length(XI) &gt; 2*d  <span class="comment">% generate candidates for this parent</span>
+0028 
+0029         <span class="comment">% number of candidates per parent component</span>
+0030         <span class="keyword">while</span> j &lt; nr_of_cand
+0031             r  = randperm(length(XI));
+0032             r  = r(1:2);
+0033             <span class="keyword">if</span> d==1
+0034                 cl = [Xloc-Xloc(r(1)) Xloc-Xloc(r(2))];
+0035                 [tmp,cl] = min(cl.^2,[],2);
+0036             <span class="keyword">else</span>            
+0037                 cl = <a href="gmmbvl_sqdist.html" class="code" title="function d = gmmbvl_sqdist(a,b)">gmmbvl_sqdist</a>( Xloc', Xloc(r,:)' );
+0038                 [tmp,cl] = min(cl,[],2);
+0039             <span class="keyword">end</span>
+0040             <span class="keyword">for</span> guy = 1:2
+0041                 data = Xloc( find( cl==guy ), :);
+0042                 <span class="keyword">if</span> size(data,1) &gt; d
+0043                     j = j + 1;
+0044                     Mus  = [Mus; mean(data)];
+0045                     Rloc = cov(data) + eye(d)*eps;
+0046                     Rloc = chol(Rloc);
+0047                     Covs = [Covs; Rloc(:)'];
+0048                     Ws   = [Ws W(i)/2];
+0049                     Knew = zeros(n,1);
+0050                     Knew(XI) = <a href="gmmbvl_em_gauss.html" class="code" title="function L = gmmbvl_em_gauss(X,M,R)">gmmbvl_em_gauss</a>( <span class="keyword">...</span>
+0051                        Xloc,Mus(<span class="keyword">end</span>,:),Covs(<span class="keyword">end</span>,:) );
+0052                     K = [K Knew];
+0053                 <span class="keyword">end</span>
+0054             <span class="keyword">end</span>
+0055         <span class="keyword">end</span>
+0056     <span class="keyword">end</span>
+0057 
+0058 
+0059     last=size(Mus,1);
+0060     <span class="keyword">if</span> last &gt; start
+0061         <span class="comment">% if candidates were added, do local partial EM</span>
+0062         alpha = Ws(start+1:last);
+0063         K2 = K(XI,start+1:last);
+0064         Mnew = Mus(start+1:last,:);
+0065         Rnew = Covs(start+1:last,:);
+0066         FF   = F(XI)*ones(1,last-start);
+0067         PP   = FF.*(ones(length(XI),1)*(1-alpha)) + <span class="keyword">...</span>
+0068                   K2.*(ones(length(XI),1)*alpha);
+0069         Pnew = (K2.*(ones(length(XI),1)*alpha))./PP;
+0070         OI   = ones(n,1);
+0071         OI(XI) = 0;
+0072         OI = find(OI==1);
+0073         lpo   = sum(log(F(OI)));
+0074         ll = sum(log(PP)) + length(OI)*log(1-alpha)+lpo;
+0075         ll = ll/n;
+0076         done = 0;
+0077         iter = 1;
+0078         
+0079         <span class="keyword">while</span> ~done
+0080             [alpha,Mnew,Rnew] = <a href="gmmbvl_em_step_partial.html" class="code" title="function [W,M,R] = gmmbvl_em_step_partial(X,W,M,R,P,n_all,plo)">gmmbvl_em_step_partial</a>( <span class="keyword">...</span>
+0081                Xloc, alpha, Mnew, Rnew, Pnew, n, 0 );
+0082             K2 = <a href="gmmbvl_em_gauss.html" class="code" title="function L = gmmbvl_em_gauss(X,M,R)">gmmbvl_em_gauss</a>(Xloc,Mnew,Rnew);
+0083             Fnew = FF.*(ones(length(XI),1)*(1-alpha)) + <span class="keyword">...</span>
+0084                K2.*(ones(length(XI),1)*alpha);
+0085             old_ll = ll;
+0086             ll = sum(log(Fnew))+length(OI)*log(1-alpha)+lpo;
+0087             ll = ll/n;
+0088             done = abs(max(ll/old_ll -1)) &lt; epsilon;
+0089             <span class="keyword">if</span> iter &gt; 20
+0090                 done=1;
+0091             <span class="keyword">end</span>;
+0092             iter = iter+1;
+0093             Pnew = (K2.*(ones(length(XI),1)*alpha))./Fnew;
+0094         <span class="keyword">end</span>   
+0095         Pnew(find(Pnew&lt;eps)) = eps;
+0096         Pnew(find(Pnew==1)) = 1-eps;
+0097         Ws(start+1:last) = alpha;
+0098         Mus(start+1:last,:) = Mnew;
+0099         Covs(start+1:last,:) = Rnew;
+0100         KL = [KL n*log(1-alpha)-sum(log(1-Pnew))];
+0101     <span class="keyword">end</span>
+0102 <span class="keyword">end</span>
+0103 
+0104 I = [];
+0105 <span class="keyword">for</span> i=1:length(Ws) <span class="comment">% remove some candiates that are unwanted</span>
+0106     S = reshape(Covs(i,:),d,d);
+0107     S = S'*S;
+0108     S = min(eig(S));
+0109     <span class="keyword">if</span> (S&lt;sigma/400 | Ws(i)&lt;2*d/n  | Ws(i)&gt;.99)
+0110         I = [I i];
+0111     <span class="keyword">end</span>
+0112 <span class="keyword">end</span>
+0113 Ws(I) = [];
+0114 KL(I) = [];
+0115 Mus(I,:) = [];
+0116 Covs(I,:) = [];
+0117 
+0118 
+0119 <span class="keyword">if</span> isempty(Ws)
+0120     Ws = 0;
+0121 <span class="keyword">else</span>
+0122     [logl sup] = max(KL);
+0123     sup = sup(1);
+0124     Mus = Mus(sup,:);
+0125     Covs = Covs(sup,:);
+0126     Ws = Ws(sup);
+0127 <span class="keyword">end</span>
+0128 
+0129</pre></div>
+<hr><address>Generated on Thu 14-Apr-2005 13:50:22 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

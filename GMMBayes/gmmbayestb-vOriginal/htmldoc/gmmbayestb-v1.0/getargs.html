@@ -1,0 +1,107 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of getargs</title>
+  <meta name="keywords" content="getargs">
+  <meta name="description" content="GETARGS  parse variable argument list into a struct">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">gmmbayestb-v1.0</a> &gt; getargs.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for gmmbayestb-v1.0&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>getargs
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>GETARGS  parse variable argument list into a struct</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function S = getargs(defaultS, varglist); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">GETARGS  parse variable argument list into a struct
+
+ S = GETARGS(defaultS, varglist)
+
+ varglist - a cell array of name, value pairs
+ defaultS - struct containing the default values
+
+ Example:
+   function foo(par1, varargin);
+   args = struct( 'param1', 0, 'param2', eye(3) );
+   args = getargs( args, varargin );
+   disp(args.param1);
+
+  foo(2, 'param1', 14) will print 14
+
+ Author:
+   Pekka Paalanen &lt;paalanen@lut.fi&gt;
+
+ $name$
+ $Id: getargs.m,v 1.1 2004/11/02 08:32:22 paalanen Exp $</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="warning_wrap.html" class="code" title="function [] = warning_wrap(varargin);">warning_wrap</a>	WARNING_WRAP()  warning function wrapper</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="gmmb_classify.html" class="code" title="function [t] = gmmb_classify(bayesS, data_, varargin);">gmmb_classify</a>	GMMB_CLASSIFY Classify data using Bayesian or Mahalanobis distance classifier.</li><li><a href="gmmb_em.html" class="code" title="function [estimate, varargout] = gmmb_em(data, varargin);">gmmb_em</a>	GMMB_EM     - EM estimated GMM parameters</li><li><a href="gmmb_fj.html" class="code" title="function [estimate, varargout] = gmmb_fj(data, varargin);">gmmb_fj</a>	GMMB_FJ     - Figueiredo-Jain estimated GMM parameters</li><li><a href="gmmb_gem.html" class="code" title="function [estimate, varargout] = gmmb_gem(data, varargin);">gmmb_gem</a>	GMMB_GEM    - Greedy EM estimated GMM parameters</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">%GETARGS  parse variable argument list into a struct</span>
+0002 <span class="comment">%</span>
+0003 <span class="comment">% S = GETARGS(defaultS, varglist)</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">% varglist - a cell array of name, value pairs</span>
+0006 <span class="comment">% defaultS - struct containing the default values</span>
+0007 <span class="comment">%</span>
+0008 <span class="comment">% Example:</span>
+0009 <span class="comment">%   function foo(par1, varargin);</span>
+0010 <span class="comment">%   args = struct( 'param1', 0, 'param2', eye(3) );</span>
+0011 <span class="comment">%   args = getargs( args, varargin );</span>
+0012 <span class="comment">%   disp(args.param1);</span>
+0013 <span class="comment">%</span>
+0014 <span class="comment">%  foo(2, 'param1', 14) will print 14</span>
+0015 <span class="comment">%</span>
+0016 <span class="comment">% Author:</span>
+0017 <span class="comment">%   Pekka Paalanen &lt;paalanen@lut.fi&gt;</span>
+0018 <span class="comment">%</span>
+0019 <span class="comment">% $name$</span>
+0020 <span class="comment">% $Id: getargs.m,v 1.1 2004/11/02 08:32:22 paalanen Exp $</span>
+0021 
+0022 <a name="_sub0" href="#_subfunctions" class="code">function S = getargs(defaultS, varglist);</a>
+0023 
+0024 <span class="keyword">if</span> mod(length(varglist),2) ~=0
+0025     error(<span class="string">'Odd number of variable parameters'</span>);
+0026 <span class="keyword">end</span>
+0027 
+0028 S = defaultS;
+0029 i=1;
+0030 <span class="keyword">while</span> i &lt;= length(varglist)
+0031     <span class="keyword">if</span> isfield(S, varglist{i})
+0032         <span class="comment">% for Matlab R12</span>
+0033         <span class="comment">%S = setfield(S, varglist{i}, varglist{i+1});</span>
+0034         
+0035         <span class="comment">% for Matlab R13 and above</span>
+0036         S.(varglist{i}) = varglist{i+1};
+0037     <span class="keyword">else</span>
+0038         <a href="warning_wrap.html" class="code" title="function [] = warning_wrap(varargin);">warning_wrap</a>(<span class="string">'getargs:unknown_param'</span>, <span class="keyword">...</span>
+0039                 [<span class="string">'Unknown parameter &quot;'</span> varglist{i} <span class="string">'&quot;'</span>]);
+0040     <span class="keyword">end</span>
+0041     i = i+2;
+0042 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Thu 14-Apr-2005 13:50:22 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

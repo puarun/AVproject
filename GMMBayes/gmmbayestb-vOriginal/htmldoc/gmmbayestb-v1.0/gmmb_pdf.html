@@ -1,0 +1,107 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of gmmb_pdf</title>
+  <meta name="keywords" content="gmmb_pdf">
+  <meta name="description" content="GMMB_PDF    - (Complex range) multivariate Gaussian mixture model pdf">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">gmmbayestb-v1.0</a> &gt; gmmb_pdf.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for gmmbayestb-v1.0&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>gmmb_pdf
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>GMMB_PDF    - (Complex range) multivariate Gaussian mixture model pdf</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [pdf] = gmmb_pdf(data_, bayesS_); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">GMMB_PDF    - (Complex range) multivariate Gaussian mixture model pdf
+
+ p = gmmb_pdf(data, bayesS)
+
+ data = N x D matrix
+ bayesS = 1 x K struct array, the bayesS struct,
+ fields used:
+   mu = D x C matrix
+   sigma = D x D x C matrix array
+   weight = C x 1 vector
+
+ p = N x K matrix
+
+ D dimensions, N points, C components, K classes
+
+ The result is a matrix of PDF values computed for
+ each data point and class.
+ see: GMMB_CMVNPDF</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="gmmb_cmvnpdf.html" class="code" title="function y = gmmb_cmvnpdf(X, Mu, Sigma)">gmmb_cmvnpdf</a>	GMMB_CMVNPDF - Compute the value of Gaussian PDF (real or complex range)</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="gmmb_classify.html" class="code" title="function [t] = gmmb_classify(bayesS, data_, varargin);">gmmb_classify</a>	GMMB_CLASSIFY Classify data using Bayesian or Mahalanobis distance classifier.</li><li><a href="gmmb_demo01.html" class="code" title="function [] = gmmb_demo01;">gmmb_demo01</a>	GMMB_DEMO01   Demostrate GMMBayes mixture learning and data classification.</li><li><a href="gmmb_generatehist.html" class="code" title="function histS = gmmb_generatehist(bayesS, N);">gmmb_generatehist</a>	GMMB_GENERATEHIST Create histS structure for PDF-value - density quantile mapping.</li><li><a href="gmmb_hist.html" class="code" title="function histS = gmmb_hist(data_, type_, bayesS);">gmmb_hist</a>	GMMB_HIST Create histS structure from data for PDF-value - density quantile mapping</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">%GMMB_PDF    - (Complex range) multivariate Gaussian mixture model pdf</span>
+0002 <span class="comment">%</span>
+0003 <span class="comment">% p = gmmb_pdf(data, bayesS)</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">% data = N x D matrix</span>
+0006 <span class="comment">% bayesS = 1 x K struct array, the bayesS struct,</span>
+0007 <span class="comment">% fields used:</span>
+0008 <span class="comment">%   mu = D x C matrix</span>
+0009 <span class="comment">%   sigma = D x D x C matrix array</span>
+0010 <span class="comment">%   weight = C x 1 vector</span>
+0011 <span class="comment">%</span>
+0012 <span class="comment">% p = N x K matrix</span>
+0013 <span class="comment">%</span>
+0014 <span class="comment">% D dimensions, N points, C components, K classes</span>
+0015 <span class="comment">%</span>
+0016 <span class="comment">% The result is a matrix of PDF values computed for</span>
+0017 <span class="comment">% each data point and class.</span>
+0018 <span class="comment">% see: GMMB_CMVNPDF</span>
+0019 
+0020 <span class="comment">% Author: Pekka Paalanen &lt;pekka.paalanen@lut.fi&gt;</span>
+0021 
+0022 <span class="comment">%</span>
+0023 <span class="comment">% $Name:  $</span>
+0024 <span class="comment">% $Id: gmmb_pdf.m,v 1.2 2004/11/02 09:00:18 paalanen Exp $</span>
+0025 
+0026 <a name="_sub0" href="#_subfunctions" class="code">function [pdf] = gmmb_pdf(data_, bayesS_);</a>
+0027 N = size(data_,1);
+0028 K = size(bayesS_, 2);
+0029 
+0030 pdf = zeros(N,K);
+0031 
+0032 <span class="keyword">for</span> k = 1:K
+0033     weight = bayesS_(k).weight;
+0034     mu = bayesS_(k).mu;
+0035     sigma = bayesS_(k).sigma;
+0036 
+0037     p = zeros(N,1);
+0038     <span class="keyword">for</span> c = 1:size(weight,1);
+0039         p = p + weight(c) * <span class="keyword">...</span>
+0040            <a href="gmmb_cmvnpdf.html" class="code" title="function y = gmmb_cmvnpdf(X, Mu, Sigma)">gmmb_cmvnpdf</a>(data_, mu(:,c).', sigma(:,:,c));
+0041     <span class="keyword">end</span>
+0042     pdf(:,k) = p;
+0043 <span class="keyword">end</span>
+0044</pre></div>
+<hr><address>Generated on Thu 14-Apr-2005 13:50:22 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

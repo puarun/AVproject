@@ -1,0 +1,99 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of gmmb_weightprior</title>
+  <meta name="keywords" content="gmmb_weightprior">
+  <meta name="description" content="GMMB_WEIGHTPRIOR   Multiply PDF values with constant priors">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">gmmbayestb-v1.0</a> &gt; gmmb_weightprior.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for gmmbayestb-v1.0&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>gmmb_weightprior
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>GMMB_WEIGHTPRIOR   Multiply PDF values with constant priors</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function p = gmmb_weightprior(pdfmat, bayesS); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">GMMB_WEIGHTPRIOR   Multiply PDF values with constant priors
+
+     P = GMMB_WEIGHTPRIOR(pdfmat, bayesS)
+
+     pdfmat = N x K matrix of PDF values at N points
+              in K different PDFs (the output of gmmb_pdf)
+     bayesS = the bayesS struct used to compute pdfmat,
+              used fields: apriories
+     P = N x K matrix of weighted PDF values.
+
+     See also <a href="gmmb_pdf.html" class="code" title="function [pdf] = gmmb_pdf(data_, bayesS_);">GMMB_PDF</a>.
+
+
+ Author(s):
+    Pekka Paalanen &lt;pekka.paalanen@lut.fi&gt;
+
+ Copyright:
+
+   Bayesian Classifier with Gaussian Mixture Model Pdf
+   functionality is Copyright (C) 2003, 2004 by Pekka Paalanen and
+   Joni-Kristian Kamarainen.
+
+   $Name:  $ $Revision: 1.1 $  $Date: 2004/11/02 08:32:22 $</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="gmmb_classify.html" class="code" title="function [t] = gmmb_classify(bayesS, data_, varargin);">gmmb_classify</a>	GMMB_CLASSIFY Classify data using Bayesian or Mahalanobis distance classifier.</li><li><a href="gmmb_demo01.html" class="code" title="function [] = gmmb_demo01;">gmmb_demo01</a>	GMMB_DEMO01   Demostrate GMMBayes mixture learning and data classification.</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">%GMMB_WEIGHTPRIOR   Multiply PDF values with constant priors</span>
+0002 <span class="comment">%</span>
+0003 <span class="comment">%     P = GMMB_WEIGHTPRIOR(pdfmat, bayesS)</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">%     pdfmat = N x K matrix of PDF values at N points</span>
+0006 <span class="comment">%              in K different PDFs (the output of gmmb_pdf)</span>
+0007 <span class="comment">%     bayesS = the bayesS struct used to compute pdfmat,</span>
+0008 <span class="comment">%              used fields: apriories</span>
+0009 <span class="comment">%     P = N x K matrix of weighted PDF values.</span>
+0010 <span class="comment">%</span>
+0011 <span class="comment">%     See also GMMB_PDF.</span>
+0012 <span class="comment">%</span>
+0013 <span class="comment">%</span>
+0014 <span class="comment">% Author(s):</span>
+0015 <span class="comment">%    Pekka Paalanen &lt;pekka.paalanen@lut.fi&gt;</span>
+0016 <span class="comment">%</span>
+0017 <span class="comment">% Copyright:</span>
+0018 <span class="comment">%</span>
+0019 <span class="comment">%   Bayesian Classifier with Gaussian Mixture Model Pdf</span>
+0020 <span class="comment">%   functionality is Copyright (C) 2003, 2004 by Pekka Paalanen and</span>
+0021 <span class="comment">%   Joni-Kristian Kamarainen.</span>
+0022 <span class="comment">%</span>
+0023 <span class="comment">%   $Name:  $ $Revision: 1.1 $  $Date: 2004/11/02 08:32:22 $</span>
+0024 <span class="comment">%</span>
+0025 
+0026 <a name="_sub0" href="#_subfunctions" class="code">function p = gmmb_weightprior(pdfmat, bayesS);</a>
+0027 
+0028 N = size(pdfmat, 1);
+0029 priors = [bayesS.apriories];
+0030 
+0031 p = pdfmat .* repmat(priors, N, 1);</pre></div>
+<hr><address>Generated on Thu 14-Apr-2005 13:50:22 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

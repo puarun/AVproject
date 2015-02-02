@@ -1,0 +1,83 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of gmmbvl_demo2d</title>
+  <meta name="keywords" content="gmmbvl_demo2d">
+  <meta name="description" content="$Name:  $">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">gmmbayestb-v1.0</a> &gt; gmmbvl_demo2d.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for gmmbayestb-v1.0&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>gmmbvl_demo2d
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>$Name:  $</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">
+ $Name:  $</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="gmmbvl_em.html" class="code" title="function [W,M,R,varargout] = gmmbvl_em(X,kmax,nr_of_cand,plo,dia, logging)">gmmbvl_em</a>	gmmbvl_em - EM algorithm for adaptive multivariate Gaussian mixtures</li><li><a href="gmmbvl_mixgen.html" class="code" title="function [X,T,L1,L2] = gmmbvl_mixgen(n,m,k,d,c,e)">gmmbvl_mixgen</a>	gmmbvl_mixgen - Gaussian mixture generator</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">%</span>
+0002 <span class="comment">% $Name:  $</span>
+0003 
+0004 n = 400; k = 7; d = 2; c = 3; e = 10;
+0005 fprintf(<span class="string">'Sampling a %d-component %d-dimensional %d-separated mixture....\n'</span>,k,d,c);
+0006 [X,T] = <a href="gmmbvl_mixgen.html" class="code" title="function [X,T,L1,L2] = gmmbvl_mixgen(n,m,k,d,c,e)">gmmbvl_mixgen</a>(n,n,k,d,c,e);
+0007 fprintf(<span class="string">'------------------\n'</span>);
+0008 
+0009 fprintf(<span class="string">'Running 10 times normal EM with k-means initialization\n'</span>);
+0010 normal_em=[];
+0011 <span class="keyword">for</span> i=1:10
+0012   [W,M,R,Tlogl] = <a href="gmmbvl_em.html" class="code" title="function [W,M,R,varargout] = gmmbvl_em(X,kmax,nr_of_cand,plo,dia, logging)">gmmbvl_em</a>(X,T,k,0,0,0);
+0013   normal_em = [normal_em Tlogl];
+0014 <span class="keyword">end</span>
+0015 fprintf(<span class="string">'Average log-likelihood %f with std. dev. %f best run: %f \n'</span>,mean(normal_em),std(normal_em), max(normal_em));
+0016 
+0017      max_k = 10;
+0018 fprintf(<span class="string">'Running greedy EM\n'</span>);
+0019 [W,M,R,Tlogl] = <a href="gmmbvl_em.html" class="code" title="function [W,M,R,varargout] = gmmbvl_em(X,kmax,nr_of_cand,plo,dia, logging)">gmmbvl_em</a>(X,T,max_k,10,1,0);
+0020 title(<span class="string">'Mixture model'</span>);
+0021 
+0022 
+0023 figure(2); clf;plot(Tlogl,<span class="string">'-o'</span>);hold on;
+0024 xlabel <span class="string">'number of components'</span>
+0025 ylabel <span class="string">'log-likelihood of test set'</span>
+0026 plot(repmat(mean(normal_em),max_k,1),<span class="string">'r'</span>)
+0027 plot(repmat(mean(normal_em)+std(normal_em),max_k,1),<span class="string">'r--'</span>)
+0028 plot(repmat(max(normal_em),max_k,1),<span class="string">'g'</span>)
+0029 plot(repmat(mean(normal_em)-std(normal_em),max_k,1),<span class="string">'r--'</span>)
+0030 
+0031 [Tlogl,best_k] = max(Tlogl);
+0032 fprintf(<span class="string">'Best number of components according to cross-validation: %d (yielding log-likelihood %f ) \n'</span>,best_k,Tlogl);
+0033 
+0034 
+0035 legend(<span class="string">'Greedy EM'</span>,<span class="string">'mean of normal EM'</span>, <span class="string">'one standard deviation margins of normal EM'</span>,<span class="string">'best result of normal EM'</span>,4);
+0036 title(<span class="string">'Log-likelihood plots'</span>);</pre></div>
+<hr><address>Generated on Thu 14-Apr-2005 13:50:22 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

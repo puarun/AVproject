@@ -1,0 +1,89 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of gmmbvl_em_gauss</title>
+  <meta name="keywords" content="gmmbvl_em_gauss">
+  <meta name="description" content="gmmbvl_em_gauss - compute likelihoods for all points and all components">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">gmmbayestb-v1.0</a> &gt; gmmbvl_em_gauss.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for gmmbayestb-v1.0&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>gmmbvl_em_gauss
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>gmmbvl_em_gauss - compute likelihoods for all points and all components</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function L = gmmbvl_em_gauss(X,M,R) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">gmmbvl_em_gauss - compute likelihoods for all points and all components
+
+L = gmmbvl_em_gauss(X,M,R)
+  X - (n x d) matrix of input data
+  M - (k x d) matrix of components means
+  R - (k x d^2) matrix of Cholesky submatrices of components covariances
+      in vector reshaped format. To get the covariance of component k:
+      Rk = reshape(R(k,:),d,d); S = Rk'*Rk;
+returns 
+  L - (n x k) likelihoods of points x_n belonging to component k</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="gmmbvl_em.html" class="code" title="function [W,M,R,varargout] = gmmbvl_em(X,kmax,nr_of_cand,plo,dia, logging)">gmmbvl_em</a>	gmmbvl_em - EM algorithm for adaptive multivariate Gaussian mixtures</li><li><a href="gmmbvl_em_init_km.html" class="code" title="function [W,M,R,P,sigma] = gmmbvl_em_init_km(X,k,dyn)">gmmbvl_em_init_km</a>	gmmbvl_em_init_km - initialization of EM for Gaussian mixtures</li><li><a href="gmmbvl_em_step.html" class="code" title="function [W,M,R] = gmmbvl_em_step(X,W,M,R,P,plo)">gmmbvl_em_step</a>	gmmbvl_em_step - EM learning step for multivariate Gaussian mixtures</li><li><a href="gmmbvl_mixgen.html" class="code" title="function [X,T,L1,L2] = gmmbvl_mixgen(n,m,k,d,c,e)">gmmbvl_mixgen</a>	gmmbvl_mixgen - Gaussian mixture generator</li><li><a href="gmmbvl_rand_split.html" class="code" title="function [Mus, Covs, Ws]=gmmbvl_rand_split(P,X,M,R,sigma,F,W,nr_of_cand)">gmmbvl_rand_split</a>	</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function L = gmmbvl_em_gauss(X,M,R)</a>
+0002 <span class="comment">%gmmbvl_em_gauss - compute likelihoods for all points and all components</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">%L = gmmbvl_em_gauss(X,M,R)</span>
+0005 <span class="comment">%  X - (n x d) matrix of input data</span>
+0006 <span class="comment">%  M - (k x d) matrix of components means</span>
+0007 <span class="comment">%  R - (k x d^2) matrix of Cholesky submatrices of components covariances</span>
+0008 <span class="comment">%      in vector reshaped format. To get the covariance of component k:</span>
+0009 <span class="comment">%      Rk = reshape(R(k,:),d,d); S = Rk'*Rk;</span>
+0010 <span class="comment">%returns</span>
+0011 <span class="comment">%  L - (n x k) likelihoods of points x_n belonging to component k</span>
+0012 
+0013 <span class="comment">% Nikos Vlassis, 2000</span>
+0014 
+0015 <span class="comment">%</span>
+0016 <span class="comment">% $Name:  $</span>
+0017 
+0018 [n,d] = size(X);
+0019 k = size(M,1);
+0020 
+0021 L = zeros(n,k); 
+0022 <span class="keyword">for</span> j = 1:k 
+0023 
+0024   <span class="comment">% Cholesky triangular matrix of component's covariance matrix</span>
+0025   Rj = reshape(R(j,:),d,d);        
+0026   
+0027   <span class="comment">% We need to compute the Mahalanobis distances between all inputs</span>
+0028   <span class="comment">% and the mean of component j; using the Cholesky form of covariances</span>
+0029   <span class="comment">% this becomes the Euclidean norm of some new vectors</span>
+0030   New = (X - repmat(M(j,:),n,1)) * inv(Rj);
+0031   Mah = sum(New.^2,2);
+0032 
+0033   L(:,j) = (2*pi)^(-d/2) / det(Rj) * exp(-0.5*Mah);
+0034 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Thu 14-Apr-2005 13:50:22 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

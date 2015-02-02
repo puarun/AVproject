@@ -1,0 +1,116 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of gmmb_em_init_fcm1</title>
+  <meta name="keywords" content="gmmb_em_init_fcm1">
+  <meta name="description" content="GMMB_EM_INIT_FCM1">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">gmmbayestb-v1.0</a> &gt; gmmb_em_init_fcm1.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for gmmbayestb-v1.0&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>gmmb_em_init_fcm1
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>GMMB_EM_INIT_FCM1</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function initS = gmmb_em_init_fcm1(data, C, verbose); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> GMMB_EM_INIT_FCM1
+
+ initS = gmmb_em_init_fcm1(data, C, verbose)
+
+ Create an initialization structure for EM,
+ called from gmmb_em, see gmmb_em.
+
+ Fuzzy C-means clustering means, uniform weight and covariance
+ Requires the Fuzzy Logic Toolbox.
+
+ Author(s):
+    Pekka Paalanen &lt;pekka.paalanen@lut.fi&gt;
+
+ Copyright:
+
+   Bayesian Classifier with Gaussian Mixture Model Pdf
+   functionality is Copyright (C) 2004 by Pekka Paalanen and
+   Joni-Kristian Kamarainen.
+
+   $Name:  $ $Revision: 1.2 $  $Date: 2004/11/02 09:00:18 $</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="gmmb_covfixer.html" class="code" title="function [nsigma, varargout] = gmmb_covfixer(sigma);">gmmb_covfixer</a>	GMMB_COVFIXER   - force matrix to be a valid covariance matrix</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="gmmb_em.html" class="code" title="function [estimate, varargout] = gmmb_em(data, varargin);">gmmb_em</a>	GMMB_EM     - EM estimated GMM parameters</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">% GMMB_EM_INIT_FCM1</span>
+0002 <span class="comment">%</span>
+0003 <span class="comment">% initS = gmmb_em_init_fcm1(data, C, verbose)</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">% Create an initialization structure for EM,</span>
+0006 <span class="comment">% called from gmmb_em, see gmmb_em.</span>
+0007 <span class="comment">%</span>
+0008 <span class="comment">% Fuzzy C-means clustering means, uniform weight and covariance</span>
+0009 <span class="comment">% Requires the Fuzzy Logic Toolbox.</span>
+0010 <span class="comment">%</span>
+0011 <span class="comment">% Author(s):</span>
+0012 <span class="comment">%    Pekka Paalanen &lt;pekka.paalanen@lut.fi&gt;</span>
+0013 <span class="comment">%</span>
+0014 <span class="comment">% Copyright:</span>
+0015 <span class="comment">%</span>
+0016 <span class="comment">%   Bayesian Classifier with Gaussian Mixture Model Pdf</span>
+0017 <span class="comment">%   functionality is Copyright (C) 2004 by Pekka Paalanen and</span>
+0018 <span class="comment">%   Joni-Kristian Kamarainen.</span>
+0019 <span class="comment">%</span>
+0020 <span class="comment">%   $Name:  $ $Revision: 1.2 $  $Date: 2004/11/02 09:00:18 $</span>
+0021 
+0022 <a name="_sub0" href="#_subfunctions" class="code">function initS = gmmb_em_init_fcm1(data, C, verbose);</a>
+0023 
+0024 D = size(data,2);    <span class="comment">% dimensions</span>
+0025 
+0026 <span class="comment">% mu = zeros(D,C);</span>
+0027 
+0028 <span class="comment">% mus initialization (thanks V. Kyrki)</span>
+0029 <span class="keyword">if</span> C&gt;1
+0030     mu = fcm(data, C, [2.0 100 1e-3 verbose]).';
+0031     <span class="comment">% fcm initialization has random nature, results will vary</span>
+0032 <span class="keyword">else</span>
+0033     mu = mean(data, 1).';
+0034 <span class="keyword">end</span>
+0035 
+0036 <span class="comment">% covariances initialization</span>
+0037 nsigma = <a href="gmmb_covfixer.html" class="code" title="function [nsigma, varargout] = gmmb_covfixer(sigma);">gmmb_covfixer</a>(diag(diag(cov(data))));
+0038 sigma = zeros(D,D,C);
+0039 <span class="keyword">for</span> c = 1:C
+0040     sigma(:,:,c) = nsigma;
+0041 <span class="keyword">end</span>
+0042 
+0043 <span class="comment">% weights initialization</span>
+0044 weight = ones(C,1) * (1/C);
+0045 
+0046 initS = struct(<span class="keyword">...</span>
+0047     <span class="string">'mu'</span>, mu, <span class="keyword">...</span>
+0048     <span class="string">'sigma'</span>, sigma, <span class="keyword">...</span>
+0049     <span class="string">'weight'</span>, weight <span class="keyword">...</span>
+0050     );
+0051</pre></div>
+<hr><address>Generated on Thu 14-Apr-2005 13:50:22 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

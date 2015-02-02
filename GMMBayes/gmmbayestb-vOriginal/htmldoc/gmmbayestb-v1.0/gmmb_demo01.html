@@ -1,0 +1,259 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of gmmb_demo01</title>
+  <meta name="keywords" content="gmmb_demo01">
+  <meta name="description" content="GMMB_DEMO01   Demostrate GMMBayes mixture learning and data classification.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">gmmbayestb-v1.0</a> &gt; gmmb_demo01.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for gmmbayestb-v1.0&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>gmmb_demo01
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>GMMB_DEMO01   Demostrate GMMBayes mixture learning and data classification.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [] = gmmb_demo01; </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> GMMB_DEMO01   Demostrate GMMBayes mixture learning and data classification.
+        This demo generates some Gaussian mixture distributed data,
+        divides it into training and test set, runs Figueiredo-Jain
+        algorithm on the training set and classifies the test set.
+
+
+ References:
+
+ Author(s):
+    Pekka Paalanen &lt;pekka.paalanen@lut.fi&gt;
+
+ Copyright:
+
+   Bayesian Classifier with Gaussian Mixture Model Pdf
+   functionality is Copyright (C) 2003 by Pekka Paalanen and
+   Joni-Kristian Kamarainen.
+
+   $Name:  $ $Revision: 1.2 $  $Date: 2005/04/14 10:33:34 $</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="gmmb_create.html" class="code" title="function [bayesS, varargout] = gmmb_create(data, cl, method, varargin);">gmmb_create</a>	GMMB_CREATE - Construct new Bayesian classifier with Gaussian mixture model pdf</li><li><a href="gmmb_decide.html" class="code" title="function labels = gmmb_decide(p_in);">gmmb_decide</a>	GMMB_DECIDE   Make decisions; choose index of the max value.</li><li><a href="gmmb_fracthresh.html" class="code" title="function mask = gmmb_fracthresh(pdfmat, histS, thr);">gmmb_fracthresh</a>	GMMB_FRACTHRESH    Threshold PDF values according to density quantile.</li><li><a href="gmmb_generatehist.html" class="code" title="function histS = gmmb_generatehist(bayesS, N);">gmmb_generatehist</a>	GMMB_GENERATEHIST Create histS structure for PDF-value - density quantile mapping.</li><li><a href="gmmb_normalize.html" class="code" title="function p_out = gmmb_normalize(p_in);">gmmb_normalize</a>	GMMB_NORMALIZE   Normalize a matrix so that row sums are one.</li><li><a href="gmmb_pdf.html" class="code" title="function [pdf] = gmmb_pdf(data_, bayesS_);">gmmb_pdf</a>	GMMB_PDF    - (Complex range) multivariate Gaussian mixture model pdf</li><li><a href="gmmb_weightprior.html" class="code" title="function p = gmmb_weightprior(pdfmat, bayesS);">gmmb_weightprior</a>	GMMB_WEIGHTPRIOR   Multiply PDF values with constant priors</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function [tdata, ttype, left_data, left_type] = subset(data, type, n);</a></li><li><a href="#_sub2" class="code">function C = covrot(x, y, th);</a></li><li><a href="#_sub3" class="code">function plot_data(data, type, colors);</a></li></ul>
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">% GMMB_DEMO01   Demostrate GMMBayes mixture learning and data classification.</span>
+0002 <span class="comment">%        This demo generates some Gaussian mixture distributed data,</span>
+0003 <span class="comment">%        divides it into training and test set, runs Figueiredo-Jain</span>
+0004 <span class="comment">%        algorithm on the training set and classifies the test set.</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">% References:</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">% Author(s):</span>
+0010 <span class="comment">%    Pekka Paalanen &lt;pekka.paalanen@lut.fi&gt;</span>
+0011 <span class="comment">%</span>
+0012 <span class="comment">% Copyright:</span>
+0013 <span class="comment">%</span>
+0014 <span class="comment">%   Bayesian Classifier with Gaussian Mixture Model Pdf</span>
+0015 <span class="comment">%   functionality is Copyright (C) 2003 by Pekka Paalanen and</span>
+0016 <span class="comment">%   Joni-Kristian Kamarainen.</span>
+0017 <span class="comment">%</span>
+0018 <span class="comment">%   $Name:  $ $Revision: 1.2 $  $Date: 2005/04/14 10:33:34 $</span>
+0019 
+0020 <a name="_sub0" href="#_subfunctions" class="code">function [] = gmmb_demo01;</a>
+0021 
+0022 
+0023 disp(<span class="string">'Generating data from three classes with 3, 1 and 2 Gaussian components...'</span>);
+0024 
+0025 <span class="comment">% generate test data</span>
+0026 alldata = [ <span class="keyword">...</span>
+0027     mvnrnd([2 1], <a href="#_sub2" class="code" title="subfunction C = covrot(x, y, th);">covrot</a>(1, 0.7, 1), 200) ;<span class="keyword">...</span>
+0028     mvnrnd([-2 1], <a href="#_sub2" class="code" title="subfunction C = covrot(x, y, th);">covrot</a>(0.4, 1.2, pi/3), 200) ;<span class="keyword">...</span>
+0029     mvnrnd([0 1.5], <a href="#_sub2" class="code" title="subfunction C = covrot(x, y, th);">covrot</a>(0.5, 0.5, 0), 150) ;<span class="keyword">...</span>
+0030     mvnrnd([-3 -1.5], <a href="#_sub2" class="code" title="subfunction C = covrot(x, y, th);">covrot</a>(0.5, 0.5, 0), 150) ;<span class="keyword">...</span>
+0031     mvnrnd([3 -1.5], <a href="#_sub2" class="code" title="subfunction C = covrot(x, y, th);">covrot</a>(0.5, 0.5, 0), 150) ;<span class="keyword">...</span>
+0032     mvnrnd([0 -2.5], <a href="#_sub2" class="code" title="subfunction C = covrot(x, y, th);">covrot</a>(2.5, 1.5, 0), 200) ;<span class="keyword">...</span>
+0033     ];
+0034 
+0035 alltype = [ <span class="keyword">...</span>
+0036     1*ones(200,1); <span class="keyword">...</span>
+0037     1*ones(200,1); <span class="keyword">...</span>
+0038     2*ones(150,1); <span class="keyword">...</span>
+0039     3*ones(150,1); <span class="keyword">...</span>
+0040     3*ones(150,1); <span class="keyword">...</span>
+0041     1*ones(200,1); <span class="keyword">...</span>
+0042     ];
+0043 
+0044 disp(<span class="string">'Separating test set (30%) and training set (70%)...'</span>);
+0045 [Ptrain Ttrain Ptest Ttest] = <a href="#_sub1" class="code" title="subfunction [tdata, ttype, left_data, left_type] = subset(data, type, n);">subset</a>(alldata, alltype, round(size(alltype, 1)*0.70));
+0046 figH = figure;
+0047 <a href="#_sub3" class="code" title="subfunction plot_data(data, type, colors);">plot_data</a>(Ptrain, Ttrain, [<span class="string">'xr'</span>; <span class="string">'xb'</span>; <span class="string">'xg'</span>]);
+0048 disp(<span class="string">'Now we have this kind of training set, three classes.'</span>);
+0049 disp(<span class="string">'Next we will use the FJ algorithm to learn those classes.'</span>);
+0050 input(<span class="string">'&lt;press enter&gt;'</span>);
+0051 
+0052 
+0053 FJ_params = { <span class="string">'Cmax'</span>, 25, <span class="string">'thr'</span>, 1e-3, <span class="string">'animate'</span>, 1 }
+0054 disp(<span class="string">'Running FJ...'</span>);
+0055 
+0056     bayesS = <a href="gmmb_create.html" class="code" title="function [bayesS, varargout] = gmmb_create(data, cl, method, varargin);">gmmb_create</a>(Ptrain, Ttrain, <span class="string">'FJ'</span>, FJ_params{:});
+0057 
+0058 disp(<span class="string">'Training complete.'</span>);
+0059 disp(<span class="string">'There are now 3 more figures open, in those you can see how the FJ learned the distributions.'</span>);
+0060 input(<span class="string">'&lt;press enter&gt;'</span>);
+0061 
+0062 
+0063 
+0064 figure(figH);
+0065 disp(<span class="string">'This is our test set. Let''s forget the class labels and classify the samples.'</span>);
+0066 <a href="#_sub3" class="code" title="subfunction plot_data(data, type, colors);">plot_data</a>(Ptest, Ttest, [<span class="string">'xr'</span>; <span class="string">'xb'</span>; <span class="string">'xg'</span>]);
+0067 input(<span class="string">'&lt;press enter&gt;'</span>);
+0068 
+0069 
+0070     <span class="comment">% This is the Bayesian case.</span>
+0071     pdfmat = <a href="gmmb_pdf.html" class="code" title="function [pdf] = gmmb_pdf(data_, bayesS_);">gmmb_pdf</a>(Ptest, bayesS);
+0072     postprob = <a href="gmmb_normalize.html" class="code" title="function p_out = gmmb_normalize(p_in);">gmmb_normalize</a>( <a href="gmmb_weightprior.html" class="code" title="function p = gmmb_weightprior(pdfmat, bayesS);">gmmb_weightprior</a>(pdfmat, bayesS) );
+0073     result = <a href="gmmb_decide.html" class="code" title="function labels = gmmb_decide(p_in);">gmmb_decide</a>(postprob);
+0074 
+0075 disp(<span class="string">'Done classifying. We used the Bayesian classifier.'</span>);
+0076 
+0077 <a href="#_sub3" class="code" title="subfunction plot_data(data, type, colors);">plot_data</a>(Ptest, result, [<span class="string">'xr'</span>; <span class="string">'xb'</span>; <span class="string">'xg'</span>]);
+0078 rat = sum(result == Ttest) / length(Ttest);
+0079 disp([<span class="string">'We got '</span> num2str(rat*100) <span class="string">' percent correct.'</span>]);
+0080 disp(<span class="string">'The misclassified points are circled.'</span>);
+0081 miss = Ptest(result ~= Ttest, :);
+0082 hold on
+0083 plot(miss(:,1), miss(:,2), <span class="string">'ok'</span>);
+0084 input(<span class="string">'&lt;press enter&gt;'</span>);
+0085 
+0086 
+0087 figure
+0088 
+0089     <span class="comment">% pdfmat and postprob are already computed</span>
+0090     histS = <a href="gmmb_generatehist.html" class="code" title="function histS = gmmb_generatehist(bayesS, N);">gmmb_generatehist</a>(bayesS, 1000);
+0091     outlier_mask = <a href="gmmb_fracthresh.html" class="code" title="function mask = gmmb_fracthresh(pdfmat, histS, thr);">gmmb_fracthresh</a>(pdfmat, histS, 0.9);
+0092     postprob(outlier_mask) = 0;
+0093     result = <a href="gmmb_decide.html" class="code" title="function labels = gmmb_decide(p_in);">gmmb_decide</a>(postprob);
+0094     
+0095     <span class="comment">% Notice that in this case we chose:</span>
+0096     <span class="comment">% a) for each point, discard the classes that do not</span>
+0097     <span class="comment">%    pass the threshold and then choose the winner of the</span>
+0098     <span class="comment">%    remaining classes, not vice versa.</span>
+0099     <span class="comment">% b) not to normalize the posteriors after thresholding.</span>
+0100 
+0101 <a href="#_sub3" class="code" title="subfunction plot_data(data, type, colors);">plot_data</a>(Ptest, result+1, [<span class="string">'.k'</span>; <span class="string">'xr'</span>; <span class="string">'xb'</span>; <span class="string">'xg'</span>]);
+0102 miss = Ptest((result ~= Ttest)&amp;(result~=0), :);
+0103 hold on
+0104 plot(miss(:,1), miss(:,2), <span class="string">'ok'</span>);
+0105 disp(<span class="string">'Here we classified the test data again using threshold of density quantile=0.9.'</span>);
+0106 disp(<span class="string">'The points classified as outliers are black dots.'</span>);
+0107 disp(<span class="string">'The misclassified points, that are not outliers, are circled.'</span>);
+0108 input(<span class="string">'&lt;press enter&gt;'</span>);
+0109 
+0110 disp(<span class="string">'The End.'</span>);
+0111 
+0112 
+0113 
+0114 
+0115 <span class="comment">% ---------------- only helper functions from here on ------------------------</span>
+0116 
+0117 
+0118 <a name="_sub1" href="#_subfunctions" class="code">function [tdata, ttype, left_data, left_type] = subset(data, type, n);</a>
+0119 <span class="comment">% [tdata ttype left_data left_type] = SUBSET(data, type, n)</span>
+0120 <span class="comment">% Get a subset of size n points from [data, type] into [tdata ttype].</span>
+0121 <span class="comment">% The rest of the points go into [left_data left_type].</span>
+0122 <span class="comment">% Preserves class portions, selects random points.</span>
+0123 
+0124 <span class="comment">% Author: Pekka Paalanen &lt;pekka.paalanen@lut.fi&gt;</span>
+0125 
+0126 <span class="comment">% $Id: gmmb_demo01.m,v 1.2 2005/04/14 10:33:34 paalanen Exp $</span>
+0127 
+0128 tdata = zeros(n, size(data,2));
+0129 ttype = zeros(n, 1);
+0130 left_data = [];
+0131 left_type = [];
+0132 
+0133 N = size(data,1);
+0134 <span class="keyword">if</span> n&gt;N
+0135     tdata = data;
+0136     ttype = type;
+0137     <span class="keyword">return</span>;
+0138 <span class="keyword">end</span>
+0139 
+0140 left_data = zeros(N-n, size(data,2));
+0141 left_type = zeros(N-n, 1);
+0142 
+0143 done=0;
+0144 over=0;
+0145 e=0;
+0146 unkst = unique(type)';
+0147 <span class="keyword">for</span> k = unkst
+0148     cdata = data(type==k, :);
+0149     cN = size(cdata,1);
+0150     sn = min(round(n*cN/N), n-done);
+0151     e = e + sn - n*cN/N;
+0152     <span class="keyword">if</span> e &gt;= 1
+0153         e = e-1;
+0154         sn = sn -1;
+0155     <span class="keyword">end</span>
+0156     <span class="keyword">if</span> e &lt;= -1
+0157         e = e+1;
+0158         sn = sn +1;
+0159     <span class="keyword">end</span>
+0160     perm = randperm(cN);
+0161     tdata((done+1):(done+sn), :) = cdata(perm(1:sn), :);
+0162     left_data((over+1):(over+cN-sn), :) = cdata(perm((sn+1):cN), :);
+0163     ttype((done+1):(done+sn), 1) = k;
+0164     left_type((over+1):(over+cN-sn), :) = k;
+0165     done = done + sn;
+0166     over = over + cN - sn;
+0167 <span class="keyword">end</span>
+0168 
+0169 
+0170 
+0171 <a name="_sub2" href="#_subfunctions" class="code">function C = covrot(x, y, th);</a>
+0172 <span class="comment">% Create rotated covariance matrix.</span>
+0173 <span class="comment">% C = covrot(x, y, th)</span>
+0174 <span class="comment">% x, y are standard deviations and th is rotation angle</span>
+0175 <span class="comment">% $Id: gmmb_demo01.m,v 1.2 2005/04/14 10:33:34 paalanen Exp $</span>
+0176 
+0177 O = [x 0; 0 y];
+0178 R = [cos(th) -sin(th); sin(th) cos(th)];
+0179 M = R * O;
+0180 C = M * M';
+0181 
+0182 
+0183 <a name="_sub3" href="#_subfunctions" class="code">function plot_data(data, type, colors);</a>
+0184 
+0185 <span class="keyword">for</span> k = 1:max(type)
+0186     x = data(type==k,1);
+0187     y = data(type==k,2);
+0188     <span class="keyword">if</span> ~isempty(x)
+0189         h = plot(x, y, colors(mod(k-1,size(colors,1))+1,:));
+0190     <span class="keyword">end</span>
+0191     <span class="comment">%set(h, 'MarkerSize', msize);</span>
+0192     hold on
+0193 <span class="keyword">end</span>
+0194 hold off</pre></div>
+<hr><address>Generated on Thu 14-Apr-2005 13:50:22 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

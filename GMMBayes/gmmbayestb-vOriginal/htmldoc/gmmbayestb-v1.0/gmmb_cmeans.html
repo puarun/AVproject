@@ -1,0 +1,97 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of gmmb_cmeans</title>
+  <meta name="keywords" content="gmmb_cmeans">
+  <meta name="description" content="GMMB_CMEANS  simple c-means clustering">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">gmmbayestb-v1.0</a> &gt; gmmb_cmeans.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for gmmbayestb-v1.0&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>gmmb_cmeans
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>GMMB_CMEANS  simple c-means clustering</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [pclass, clust]=gmmb_cmeans(pdata,nclust,count); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> GMMB_CMEANS  simple c-means clustering
+
+ T = CMEANS(data, nclust, count)
+ [T, CLUST] = CMEANS(...)
+
+ data    input data, N x D matrix
+ nclust  number of clusters
+ count   number of iterations
+
+ T       output, data labels, 1 x N vector
+ CL      output, cluster centers, nclust x D matrix
+
+ Author: Jarmo Ilonen
+ Editor: Pekka Paalanen
+
+ $Name:  $ $Id: gmmb_cmeans.m,v 1.1 2004/11/02 08:32:22 paalanen Exp $</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="gmmb_em_init_cmeans1.html" class="code" title="function initS = gmmb_em_init_cmeans1(data, C);">gmmb_em_init_cmeans1</a>	GMMB_EM_INIT_CMEANS1</li><li><a href="gmmb_em_init_cmeans2.html" class="code" title="function initS = gmmb_em_init_cmeans2(data, C);">gmmb_em_init_cmeans2</a>	GMMB_EM_INIT_CMEANS2</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">% GMMB_CMEANS  simple c-means clustering</span>
+0002 <span class="comment">%</span>
+0003 <span class="comment">% T = CMEANS(data, nclust, count)</span>
+0004 <span class="comment">% [T, CLUST] = CMEANS(...)</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">% data    input data, N x D matrix</span>
+0007 <span class="comment">% nclust  number of clusters</span>
+0008 <span class="comment">% count   number of iterations</span>
+0009 <span class="comment">%</span>
+0010 <span class="comment">% T       output, data labels, 1 x N vector</span>
+0011 <span class="comment">% CL      output, cluster centers, nclust x D matrix</span>
+0012 <span class="comment">%</span>
+0013 <span class="comment">% Author: Jarmo Ilonen</span>
+0014 <span class="comment">% Editor: Pekka Paalanen</span>
+0015 <span class="comment">%</span>
+0016 <span class="comment">% $Name:  $ $Id: gmmb_cmeans.m,v 1.1 2004/11/02 08:32:22 paalanen Exp $</span>
+0017 
+0018 <a name="_sub0" href="#_subfunctions" class="code">function [pclass, clust]=gmmb_cmeans(pdata,nclust,count);</a>
+0019 
+0020 rp = randperm(size(pdata,1));
+0021 clust = pdata(rp(1:nclust),:);
+0022 
+0023 <span class="keyword">for</span> kierros=1:count,
+0024     <span class="comment">% compute squared distance from every point to every cluster center.</span>
+0025     <span class="keyword">for</span> i=1:nclust,
+0026         vd = pdata - repmat(clust(i,:),size(pdata,1),1);
+0027         cet(:,i) = sum(abs(vd).^2, 2);
+0028     <span class="keyword">end</span>;
+0029 
+0030     <span class="comment">% compute new cluster centers</span>
+0031     [a, pclass]=min(cet');
+0032 
+0033     <span class="keyword">for</span> i=1:nclust,
+0034         clust(i,:) = mean( pdata(find(pclass==i), :) );
+0035     <span class="keyword">end</span>;
+0036 <span class="keyword">end</span>;</pre></div>
+<hr><address>Generated on Thu 14-Apr-2005 13:50:22 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

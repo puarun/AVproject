@@ -1,0 +1,387 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of gmmb_em</title>
+  <meta name="keywords" content="gmmb_em">
+  <meta name="description" content="GMMB_EM     - EM estimated GMM parameters">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">gmmbayestb-v1.0</a> &gt; gmmb_em.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for gmmbayestb-v1.0&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>gmmb_em
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>GMMB_EM     - EM estimated GMM parameters</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [estimate, varargout] = gmmb_em(data, varargin); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">GMMB_EM     - EM estimated GMM parameters
+
+ estS = gmmb_em(data)
+ estS = gmmb_em(data, &lt;params&gt;...)
+ [estS, stats] = gmmb_em(...)
+
+ This version works with complex numbers too.
+
+ data = N x D matrix
+ params can be a list of 'name', value -pairs.
+ stats is a matrix, row (cov fixes, loops, final log-likelihood)
+
+ Parameters (default value):
+
+   maxloops    maximum number of loops allowed (100)
+   thr        convergence threshold; relative log-likelihood change (1e-6)
+        set negative to use only maxloops condition
+   components    number of components in GMM (3)
+   verbose    print progress messages (false)
+   init        name of the initialization method to use ('fcm1')
+
+ Init methods:
+
+  fcm1         Fuzzy C-means clustering, requires the Fuzzy Logic Toolbox.
+               This is the original init method from GMMBayes Toolbox v0.1
+  cmeans1      C-means clustering for means, uniform weigths and covariances
+  cmeans2      C-means clustering for means, weigths and covariances
+
+ Example:
+   estS = gmmb_em(data, 'init', 'fcm1', 'components', 5, 'thr', 1e-8)
+
+ References:
+   [1] Duda, R.O., Hart, P.E, Stork, D.G, Pattern Classification,
+   2nd ed., John Wiley &amp; Sons, Inc., 2001.
+   [2] Bilmes, J.A., A Gentle Tutorial of the EM Algorithm and its
+    Application to Parameter Estimation for Gaussian Mixture and Hidden
+    Markov Models
+   International Computer Science Institute, 1998
+
+ Author(s):
+    Joni Kamarainen &lt;Joni.Kamarainen@lut.fi&gt;
+    Pekka Paalanen &lt;pekka.paalanen@lut.fi&gt;
+
+ Copyright:
+
+   Bayesian Classifier with Gaussian Mixture Model Pdf
+   functionality is Copyright (C) 2003 by Pekka Paalanen and
+   Joni-Kristian Kamarainen.
+
+   $Name:  $ $Revision: 1.2 $  $Date: 2004/11/02 09:00:18 $
+
+ Logging
+   parameters
+
+      logging   What kind of logging to do:
+        0 - no logging
+        1 - normal logging
+        2 - extra logging: store all intermediate mixtures
+      If the 'stats' output parameter is defined, then 'logging'
+      defaults to 1, otherwise it is forced to 0.
+
+  the 'stats' struct:
+      iterations: EM iteration count
+      covfixer2:  iterations-by-C matrix of gmmb_covfixer fix round counts
+      loglikes:   iterations long vector of the log-likelihood
+    extra logging:
+      initialmix: parameters for the initial mixture
+      mixtures:   parameters for all intermediate mixtures</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="getargs.html" class="code" title="function S = getargs(defaultS, varglist);">getargs</a>	GETARGS  parse variable argument list into a struct</li><li><a href="gmmb_cmvnpdf.html" class="code" title="function y = gmmb_cmvnpdf(X, Mu, Sigma)">gmmb_cmvnpdf</a>	GMMB_CMVNPDF - Compute the value of Gaussian PDF (real or complex range)</li><li><a href="gmmb_covfixer.html" class="code" title="function [nsigma, varargout] = gmmb_covfixer(sigma);">gmmb_covfixer</a>	GMMB_COVFIXER   - force matrix to be a valid covariance matrix</li><li><a href="gmmb_em_init_cmeans1.html" class="code" title="function initS = gmmb_em_init_cmeans1(data, C);">gmmb_em_init_cmeans1</a>	GMMB_EM_INIT_CMEANS1</li><li><a href="gmmb_em_init_cmeans2.html" class="code" title="function initS = gmmb_em_init_cmeans2(data, C);">gmmb_em_init_cmeans2</a>	GMMB_EM_INIT_CMEANS2</li><li><a href="gmmb_em_init_fcm1.html" class="code" title="function initS = gmmb_em_init_fcm1(data, C, verbose);">gmmb_em_init_fcm1</a>	GMMB_EM_INIT_FCM1</li><li><a href="warning_wrap.html" class="code" title="function [] = warning_wrap(varargin);">warning_wrap</a>	WARNING_WRAP()  warning function wrapper</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="gmmb_create.html" class="code" title="function [bayesS, varargout] = gmmb_create(data, cl, method, varargin);">gmmb_create</a>	GMMB_CREATE - Construct new Bayesian classifier with Gaussian mixture model pdf</li></ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function tulo = gmmcpdf(data, mu, sigma, weight);</a></li></ul>
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">%GMMB_EM     - EM estimated GMM parameters</span>
+0002 <span class="comment">%</span>
+0003 <span class="comment">% estS = gmmb_em(data)</span>
+0004 <span class="comment">% estS = gmmb_em(data, &lt;params&gt;...)</span>
+0005 <span class="comment">% [estS, stats] = gmmb_em(...)</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">% This version works with complex numbers too.</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">% data = N x D matrix</span>
+0010 <span class="comment">% params can be a list of 'name', value -pairs.</span>
+0011 <span class="comment">% stats is a matrix, row (cov fixes, loops, final log-likelihood)</span>
+0012 <span class="comment">%</span>
+0013 <span class="comment">% Parameters (default value):</span>
+0014 <span class="comment">%</span>
+0015 <span class="comment">%   maxloops    maximum number of loops allowed (100)</span>
+0016 <span class="comment">%   thr        convergence threshold; relative log-likelihood change (1e-6)</span>
+0017 <span class="comment">%        set negative to use only maxloops condition</span>
+0018 <span class="comment">%   components    number of components in GMM (3)</span>
+0019 <span class="comment">%   verbose    print progress messages (false)</span>
+0020 <span class="comment">%   init        name of the initialization method to use ('fcm1')</span>
+0021 <span class="comment">%</span>
+0022 <span class="comment">% Init methods:</span>
+0023 <span class="comment">%</span>
+0024 <span class="comment">%  fcm1         Fuzzy C-means clustering, requires the Fuzzy Logic Toolbox.</span>
+0025 <span class="comment">%               This is the original init method from GMMBayes Toolbox v0.1</span>
+0026 <span class="comment">%  cmeans1      C-means clustering for means, uniform weigths and covariances</span>
+0027 <span class="comment">%  cmeans2      C-means clustering for means, weigths and covariances</span>
+0028 <span class="comment">%</span>
+0029 <span class="comment">% Example:</span>
+0030 <span class="comment">%   estS = gmmb_em(data, 'init', 'fcm1', 'components', 5, 'thr', 1e-8)</span>
+0031 <span class="comment">%</span>
+0032 <span class="comment">% References:</span>
+0033 <span class="comment">%   [1] Duda, R.O., Hart, P.E, Stork, D.G, Pattern Classification,</span>
+0034 <span class="comment">%   2nd ed., John Wiley &amp; Sons, Inc., 2001.</span>
+0035 <span class="comment">%   [2] Bilmes, J.A., A Gentle Tutorial of the EM Algorithm and its</span>
+0036 <span class="comment">%    Application to Parameter Estimation for Gaussian Mixture and Hidden</span>
+0037 <span class="comment">%    Markov Models</span>
+0038 <span class="comment">%   International Computer Science Institute, 1998</span>
+0039 <span class="comment">%</span>
+0040 <span class="comment">% Author(s):</span>
+0041 <span class="comment">%    Joni Kamarainen &lt;Joni.Kamarainen@lut.fi&gt;</span>
+0042 <span class="comment">%    Pekka Paalanen &lt;pekka.paalanen@lut.fi&gt;</span>
+0043 <span class="comment">%</span>
+0044 <span class="comment">% Copyright:</span>
+0045 <span class="comment">%</span>
+0046 <span class="comment">%   Bayesian Classifier with Gaussian Mixture Model Pdf</span>
+0047 <span class="comment">%   functionality is Copyright (C) 2003 by Pekka Paalanen and</span>
+0048 <span class="comment">%   Joni-Kristian Kamarainen.</span>
+0049 <span class="comment">%</span>
+0050 <span class="comment">%   $Name:  $ $Revision: 1.2 $  $Date: 2004/11/02 09:00:18 $</span>
+0051 <span class="comment">%</span>
+0052 <span class="comment">% Logging</span>
+0053 <span class="comment">%   parameters</span>
+0054 <span class="comment">%</span>
+0055 <span class="comment">%      logging   What kind of logging to do:</span>
+0056 <span class="comment">%        0 - no logging</span>
+0057 <span class="comment">%        1 - normal logging</span>
+0058 <span class="comment">%        2 - extra logging: store all intermediate mixtures</span>
+0059 <span class="comment">%      If the 'stats' output parameter is defined, then 'logging'</span>
+0060 <span class="comment">%      defaults to 1, otherwise it is forced to 0.</span>
+0061 <span class="comment">%</span>
+0062 <span class="comment">%  the 'stats' struct:</span>
+0063 <span class="comment">%      iterations: EM iteration count</span>
+0064 <span class="comment">%      covfixer2:  iterations-by-C matrix of gmmb_covfixer fix round counts</span>
+0065 <span class="comment">%      loglikes:   iterations long vector of the log-likelihood</span>
+0066 <span class="comment">%    extra logging:</span>
+0067 <span class="comment">%      initialmix: parameters for the initial mixture</span>
+0068 <span class="comment">%      mixtures:   parameters for all intermediate mixtures</span>
+0069 <span class="comment">%</span>
+0070 
+0071 
+0072 <a name="_sub0" href="#_subfunctions" class="code">function [estimate, varargout] = gmmb_em(data, varargin);</a>
+0073 
+0074 <span class="comment">% default parameters</span>
+0075 conf = struct(<span class="keyword">...</span>
+0076     <span class="string">'maxloops'</span>, 100, <span class="keyword">...</span>
+0077     <span class="string">'thr'</span>, 1e-6, <span class="keyword">...</span>
+0078     <span class="string">'verbose'</span>, 0, <span class="keyword">...</span>
+0079     <span class="string">'components'</span>, 3, <span class="keyword">...</span>
+0080     <span class="string">'logging'</span>, 0, <span class="keyword">...</span>
+0081     <span class="string">'init'</span>, <span class="string">'fcm1'</span> <span class="keyword">...</span>
+0082     );
+0083 
+0084 <span class="keyword">if</span> nargout&gt;1
+0085     conf.logging = 1;
+0086     varargout{1} = [];
+0087 <span class="keyword">end</span>
+0088 
+0089 conf = <a href="getargs.html" class="code" title="function S = getargs(defaultS, varglist);">getargs</a>(conf, varargin);
+0090 
+0091 <span class="keyword">if</span> nargout&lt;2
+0092     conf.logging=0;
+0093 <span class="keyword">end</span>
+0094 
+0095 <span class="comment">% for logging</span>
+0096 log_covfixer2 = {};
+0097 log_loglikes = {};
+0098 log_initialmix = {};
+0099 log_mixtures = {};
+0100 
+0101 
+0102 <span class="comment">% --- initialization ---</span>
+0103 
+0104 N = size(data,1);    <span class="comment">% number of points</span>
+0105 D = size(data,2);    <span class="comment">% dimensions</span>
+0106 C = conf.components;
+0107 
+0108 <span class="comment">% the number of free parameters in a Gaussian</span>
+0109 <span class="keyword">if</span> isreal(data)
+0110     Nparc = D+D*(D+1)/2;
+0111 <span class="keyword">else</span>
+0112     Nparc = 2*D + D*D;
+0113 <span class="keyword">end</span>
+0114 N_limit = (Nparc+1)*3*C;
+0115 <span class="keyword">if</span> N &lt; N_limit
+0116     <a href="warning_wrap.html" class="code" title="function [] = warning_wrap(varargin);">warning_wrap</a>(<span class="string">'gmmb_em:data_amount'</span>, <span class="keyword">...</span>
+0117        [<span class="string">'Training data may be insufficient for selected '</span> <span class="keyword">...</span>
+0118         <span class="string">'number of components. '</span> <span class="keyword">...</span>
+0119         <span class="string">'Have: '</span> num2str(N) <span class="string">', recommended: &gt;'</span> num2str(N_limit) <span class="keyword">...</span>
+0120         <span class="string">' points.'</span>]);
+0121 <span class="keyword">end</span>
+0122 
+0123 <span class="keyword">switch</span> lower(conf.init)
+0124     <span class="keyword">case</span> <span class="string">'fcm1'</span>
+0125         initS = <a href="gmmb_em_init_fcm1.html" class="code" title="function initS = gmmb_em_init_fcm1(data, C, verbose);">gmmb_em_init_fcm1</a>(data, C, conf.verbose);
+0126     <span class="keyword">case</span> <span class="string">'cmeans1'</span>
+0127         initS = <a href="gmmb_em_init_cmeans1.html" class="code" title="function initS = gmmb_em_init_cmeans1(data, C);">gmmb_em_init_cmeans1</a>(data, C);
+0128     <span class="keyword">case</span> <span class="string">'cmeans2'</span>
+0129         initS = <a href="gmmb_em_init_cmeans2.html" class="code" title="function initS = gmmb_em_init_cmeans2(data, C);">gmmb_em_init_cmeans2</a>(data, C);
+0130     <span class="keyword">otherwise</span>
+0131         error([<span class="string">'Unknown initializer method: '</span> conf.init]);
+0132 <span class="keyword">end</span>
+0133 
+0134 
+0135 <span class="keyword">if</span> any(initS.weight == 0)
+0136     error(<span class="string">'Initialization produced a zero weight.'</span>);
+0137 <span class="keyword">end</span>
+0138 
+0139 mu = initS.mu;
+0140 sigma = initS.sigma;
+0141 weight = initS.weight;
+0142 
+0143 
+0144 log_initialmix = initS;
+0145 fixerloops = zeros(1, C);
+0146 
+0147 
+0148 <span class="comment">% old values for stopping condition calculations</span>
+0149 old_loglike = -realmax;
+0150 
+0151 loops=1;
+0152 fixing_cycles = 0;
+0153 
+0154 tulo = <a href="#_sub1" class="code" title="subfunction tulo = gmmcpdf(data, mu, sigma, weight);">gmmcpdf</a>(data, mu, sigma, weight);
+0155 
+0156 <span class="keyword">while</span> 1
+0157     <span class="comment">% one EM cycle</span>
+0158     pcompx = tulo ./ (sum(tulo,2)*ones(1,C));
+0159     
+0160     <span class="keyword">if</span> ~all( isfinite(pcompx(:))  )
+0161         error(<span class="string">'Probabilities are no longer finite.'</span>);
+0162     <span class="keyword">end</span>
+0163     
+0164     <span class="keyword">for</span> c = 1:C
+0165         <span class="comment">% calculate new estimates</span>
+0166         psum = sum(pcompx(:,c));
+0167         
+0168         <span class="comment">% weight</span>
+0169         weight(c) = 1/N*psum;
+0170     
+0171         <span class="comment">% mean</span>
+0172         nmu = sum(data.*(pcompx(:,c)*ones(1,D)), 1).' ./ psum;
+0173         mu(:,c) = nmu;
+0174         
+0175         <span class="comment">% covariance</span>
+0176         moddata = (data - ones(N,1)*(nmu.')) .* (sqrt(pcompx(:,c))*ones(1,D));
+0177         <span class="comment">% sqrt(pcompx) is because it will be squared back</span>
+0178         nsigma = (moddata' * moddata) ./ psum;
+0179         
+0180         <span class="comment">% covariance matrix goodness assurance</span>
+0181         [sigma(:,:,c), fixerloops(1,c)] = <a href="gmmb_covfixer.html" class="code" title="function [nsigma, varargout] = gmmb_covfixer(sigma);">gmmb_covfixer</a>(nsigma);
+0182         <span class="comment">% covfixer may change the matrix so that log-likelihood</span>
+0183         <span class="comment">% decreases. So, if covfixer changes something,</span>
+0184         <span class="comment">% disable the stop condition. If going into infinite</span>
+0185         <span class="comment">% fix/estimate -loop, quit.</span>
+0186     <span class="keyword">end</span>
+0187     
+0188     <span class="comment">% finish test</span>
+0189     tulo = <a href="#_sub1" class="code" title="subfunction tulo = gmmcpdf(data, mu, sigma, weight);">gmmcpdf</a>(data, mu, sigma, weight);
+0190     loglike = sum(log(sum(tulo, 2)));
+0191     
+0192     <span class="keyword">if</span> conf.verbose ~= 0
+0193         disp([ <span class="string">'log-likelihood diff '</span> num2str(loglike-old_loglike)  <span class="string">' on round '</span> num2str(loops) ]);
+0194     <span class="keyword">end</span>
+0195     
+0196     <span class="keyword">if</span> conf.logging&gt;0
+0197         log_covfixer2{loops} = fixerloops;
+0198         log_loglikes{loops} = loglike;
+0199     <span class="keyword">end</span>
+0200     <span class="keyword">if</span> conf.logging&gt;1
+0201         log_mixtures{loops} = struct(<span class="keyword">...</span>
+0202             <span class="string">'weight'</span>, weight, <span class="keyword">...</span>
+0203             <span class="string">'mu'</span>, mu, <span class="keyword">...</span>
+0204             <span class="string">'sigma'</span>, sigma);
+0205     <span class="keyword">end</span>
+0206 
+0207     <span class="keyword">if</span> any(fixerloops ~= 0)
+0208         <span class="comment">% if any cov's were fixed, increase count and</span>
+0209         <span class="comment">% do not evaluate stopping threshold.</span>
+0210         fixing_cycles = fixing_cycles +1;
+0211         <span class="keyword">if</span> conf.verbose ~= 0
+0212             disp([<span class="string">'fix cycle '</span> num2str(fixing_cycles) <span class="keyword">...</span>
+0213                   <span class="string">', fix loops '</span> num2str(fixerloops)]);
+0214         <span class="keyword">end</span>
+0215     <span class="keyword">else</span>
+0216         <span class="comment">% no cov's were fixed this round, reset the counter</span>
+0217         <span class="comment">% and evaluate threshold.</span>
+0218         fixing_cycles = 0;
+0219         <span class="keyword">if</span> (abs(loglike/old_loglike -1) &lt; conf.thr)
+0220             <span class="keyword">break</span>;
+0221         <span class="keyword">end</span>
+0222     <span class="keyword">end</span>
+0223     
+0224     <span class="keyword">if</span> fixing_cycles &gt; 20
+0225         <a href="warning_wrap.html" class="code" title="function [] = warning_wrap(varargin);">warning_wrap</a>(<span class="string">'gmmb_em:fixing_loop'</span>, <span class="keyword">...</span>
+0226                [<span class="string">'A covariance matrix has been fixed repeatedly'</span> <span class="keyword">...</span>
+0227                 <span class="string">' too many times, quitting EM estimation.'</span>]);
+0228         <span class="keyword">break</span>;
+0229     <span class="keyword">end</span>
+0230     
+0231     <span class="keyword">if</span> loops &gt;= conf.maxloops
+0232         <span class="keyword">break</span>;
+0233     <span class="keyword">end</span>
+0234 
+0235     loops = loops +1;
+0236     old_loglike = loglike;
+0237 <span class="keyword">end</span>
+0238 
+0239 
+0240 
+0241 estimate = struct(<span class="string">'mu'</span>, mu,<span class="keyword">...</span>
+0242         <span class="string">'sigma'</span>, sigma,<span class="keyword">...</span>
+0243         <span class="string">'weight'</span>, weight);
+0244 
+0245 <span class="keyword">if</span> conf.logging&gt;1
+0246     varargout{1} = struct(<span class="keyword">...</span>
+0247         <span class="string">'iterations'</span>, {loops}, <span class="keyword">...</span>
+0248         <span class="string">'covfixer2'</span>, {cat(1,log_covfixer2{:})}, <span class="keyword">...</span>
+0249         <span class="string">'loglikes'</span>, {cat(1,log_loglikes{:})}, <span class="keyword">...</span>
+0250         <span class="string">'initialmix'</span>, {log_initialmix}, <span class="keyword">...</span>
+0251         <span class="string">'mixtures'</span>, {log_mixtures});
+0252 <span class="keyword">end</span>
+0253 <span class="keyword">if</span> conf.logging == 1
+0254     varargout{1} = struct(<span class="keyword">...</span>
+0255         <span class="string">'iterations'</span>, {loops}, <span class="keyword">...</span>
+0256         <span class="string">'covfixer2'</span>, {cat(1,log_covfixer2{:})}, <span class="keyword">...</span>
+0257         <span class="string">'loglikes'</span>, {cat(1,log_loglikes{:})} );
+0258 <span class="keyword">end</span>
+0259 
+0260 
+0261 <span class="comment">% ------------------------------------------</span>
+0262 
+0263 <a name="_sub1" href="#_subfunctions" class="code">function tulo = gmmcpdf(data, mu, sigma, weight);</a>
+0264 N = size(data, 1);
+0265 C = size(weight,1);
+0266 
+0267 pxcomp = zeros(N,C);
+0268 <span class="keyword">for</span> c = 1:C
+0269     pxcomp(:,c) = <a href="gmmb_cmvnpdf.html" class="code" title="function y = gmmb_cmvnpdf(X, Mu, Sigma)">gmmb_cmvnpdf</a>(data, mu(:,c).', sigma(:,:,c));
+0270 <span class="keyword">end</span>
+0271 tulo = pxcomp.*repmat(weight.', N,1);
+0272</pre></div>
+<hr><address>Generated on Thu 14-Apr-2005 13:50:22 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

@@ -1,0 +1,225 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of gmmb_classify</title>
+  <meta name="keywords" content="gmmb_classify">
+  <meta name="description" content="GMMB_CLASSIFY Classify data using Bayesian or Mahalanobis distance classifier.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">gmmbayestb-v1.0</a> &gt; gmmb_classify.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for gmmbayestb-v1.0&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>gmmb_classify
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>GMMB_CLASSIFY Classify data using Bayesian or Mahalanobis distance classifier.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [t] = gmmb_classify(bayesS, data_, varargin); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">GMMB_CLASSIFY Classify data using Bayesian or Mahalanobis distance classifier.
+
+     T = GMMB_CLASSIFY(S, data, ...) Classifies D dimensional data (N points)
+     using Gaussian Mixture Model
+     Bayesian classifier in struct S into K classes.
+     S is a bayesS struct, see readme.txt.
+
+     See also <a href="gmmb_create.html" class="code" title="function [bayesS, varargout] = gmmb_create(data, cl, method, varargin);">GMMB_CREATE</a>.
+
+     ***
+     This is a legacy interface that is no longer developed.
+     This does not use <a href="gmmb_generatehist.html" class="code" title="function histS = gmmb_generatehist(bayesS, N);">gmmb_generatehist</a> but relies on the histS
+     created during classifier training.
+     ***
+
+ Optional parameters:
+    values        Return numbers instead of class labels.
+                  For Mahalanobis boolean; return the Mahalanobis distances.
+                  For Bayesian: 0 class labels
+                                1 posterior probabilities
+                                2 posterior likelihood (no scaling)
+                  Default setting 0. T: N x K matrix, if enabled.
+
+    mahalanobis   Use Mahalanobis distances as classification rule
+                  instead of Bayesian. Boolean, default 0.
+
+    quantile      Use a 'trash class' based on training data density quantile.
+                  The function <a href="gmmb_generatehist.html" class="code" title="function histS = gmmb_generatehist(bayesS, N);">gmmb_generatehist</a> will be called.
+                  Not available with Mahalanobis distance method.
+                  Range [0, 1], default 0 (not in use).
+                  If a sample goes to the trash class:
+                    class label = 0
+                    all posterior probabilities = 0
+                    all posterior likelihoods = 0
+                  If a sample does not belong to a class in case values~=0,
+                  the respective posterior will be zero.
+
+ References:
+   [1] Duda, R.O., Hart, P.E, Stork, D.G, Pattern Classification,
+   2nd ed., John Wiley &amp; Sons, Inc., 2001.
+
+ Author(s):
+    Joni Kamarainen &lt;Joni.Kamarainen@lut.fi&gt;
+    Pekka Paalanen &lt;pekka.paalanen@lut.fi&gt;
+
+ Copyright:
+
+   Bayesian Classifier with Gaussian Mixture Model Pdf
+   functionality is Copyright (C) 2003, 2004 by Pekka Paalanen and
+   Joni-Kristian Kamarainen.
+
+   $Name:  $ $Revision: 1.2 $  $Date: 2005/04/14 10:33:34 $</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="getargs.html" class="code" title="function S = getargs(defaultS, varglist);">getargs</a>	GETARGS  parse variable argument list into a struct</li><li><a href="gmmb_decide.html" class="code" title="function labels = gmmb_decide(p_in);">gmmb_decide</a>	GMMB_DECIDE   Make decisions; choose index of the max value.</li><li><a href="gmmb_frac2lhood.html" class="code" title="function lhood = gmmb_frac2lhood(histS, f);">gmmb_frac2lhood</a>	GMMB_FRAC2LHOOD   Map density quantiles to PDF threshold values</li><li><a href="gmmb_generatehist.html" class="code" title="function histS = gmmb_generatehist(bayesS, N);">gmmb_generatehist</a>	GMMB_GENERATEHIST Create histS structure for PDF-value - density quantile mapping.</li><li><a href="gmmb_normalize.html" class="code" title="function p_out = gmmb_normalize(p_in);">gmmb_normalize</a>	GMMB_NORMALIZE   Normalize a matrix so that row sums are one.</li><li><a href="gmmb_pdf.html" class="code" title="function [pdf] = gmmb_pdf(data_, bayesS_);">gmmb_pdf</a>	GMMB_PDF    - (Complex range) multivariate Gaussian mixture model pdf</li><li><a href="gmmb_weightprior.html" class="code" title="function p = gmmb_weightprior(pdfmat, bayesS);">gmmb_weightprior</a>	GMMB_WEIGHTPRIOR   Multiply PDF values with constant priors</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">%GMMB_CLASSIFY Classify data using Bayesian or Mahalanobis distance classifier.</span>
+0002 <span class="comment">%</span>
+0003 <span class="comment">%     T = GMMB_CLASSIFY(S, data, ...) Classifies D dimensional data (N points)</span>
+0004 <span class="comment">%     using Gaussian Mixture Model</span>
+0005 <span class="comment">%     Bayesian classifier in struct S into K classes.</span>
+0006 <span class="comment">%     S is a bayesS struct, see readme.txt.</span>
+0007 <span class="comment">%</span>
+0008 <span class="comment">%     See also GMMB_CREATE.</span>
+0009 <span class="comment">%</span>
+0010 <span class="comment">%     ***</span>
+0011 <span class="comment">%     This is a legacy interface that is no longer developed.</span>
+0012 <span class="comment">%     This does not use gmmb_generatehist but relies on the histS</span>
+0013 <span class="comment">%     created during classifier training.</span>
+0014 <span class="comment">%     ***</span>
+0015 <span class="comment">%</span>
+0016 <span class="comment">% Optional parameters:</span>
+0017 <span class="comment">%    values        Return numbers instead of class labels.</span>
+0018 <span class="comment">%                  For Mahalanobis boolean; return the Mahalanobis distances.</span>
+0019 <span class="comment">%                  For Bayesian: 0 class labels</span>
+0020 <span class="comment">%                                1 posterior probabilities</span>
+0021 <span class="comment">%                                2 posterior likelihood (no scaling)</span>
+0022 <span class="comment">%                  Default setting 0. T: N x K matrix, if enabled.</span>
+0023 <span class="comment">%</span>
+0024 <span class="comment">%    mahalanobis   Use Mahalanobis distances as classification rule</span>
+0025 <span class="comment">%                  instead of Bayesian. Boolean, default 0.</span>
+0026 <span class="comment">%</span>
+0027 <span class="comment">%    quantile      Use a 'trash class' based on training data density quantile.</span>
+0028 <span class="comment">%                  The function gmmb_generatehist will be called.</span>
+0029 <span class="comment">%                  Not available with Mahalanobis distance method.</span>
+0030 <span class="comment">%                  Range [0, 1], default 0 (not in use).</span>
+0031 <span class="comment">%                  If a sample goes to the trash class:</span>
+0032 <span class="comment">%                    class label = 0</span>
+0033 <span class="comment">%                    all posterior probabilities = 0</span>
+0034 <span class="comment">%                    all posterior likelihoods = 0</span>
+0035 <span class="comment">%                  If a sample does not belong to a class in case values~=0,</span>
+0036 <span class="comment">%                  the respective posterior will be zero.</span>
+0037 <span class="comment">%</span>
+0038 <span class="comment">% References:</span>
+0039 <span class="comment">%   [1] Duda, R.O., Hart, P.E, Stork, D.G, Pattern Classification,</span>
+0040 <span class="comment">%   2nd ed., John Wiley &amp; Sons, Inc., 2001.</span>
+0041 <span class="comment">%</span>
+0042 <span class="comment">% Author(s):</span>
+0043 <span class="comment">%    Joni Kamarainen &lt;Joni.Kamarainen@lut.fi&gt;</span>
+0044 <span class="comment">%    Pekka Paalanen &lt;pekka.paalanen@lut.fi&gt;</span>
+0045 <span class="comment">%</span>
+0046 <span class="comment">% Copyright:</span>
+0047 <span class="comment">%</span>
+0048 <span class="comment">%   Bayesian Classifier with Gaussian Mixture Model Pdf</span>
+0049 <span class="comment">%   functionality is Copyright (C) 2003, 2004 by Pekka Paalanen and</span>
+0050 <span class="comment">%   Joni-Kristian Kamarainen.</span>
+0051 <span class="comment">%</span>
+0052 <span class="comment">%   $Name:  $ $Revision: 1.2 $  $Date: 2005/04/14 10:33:34 $</span>
+0053 <span class="comment">%</span>
+0054 
+0055 <a name="_sub0" href="#_subfunctions" class="code">function [t] = gmmb_classify(bayesS, data_, varargin);</a>
+0056 
+0057 conf = struct(<span class="keyword">...</span>
+0058     <span class="string">'values'</span>, 0, <span class="keyword">...</span>
+0059     <span class="string">'mahalanobis'</span>, 0, <span class="keyword">...</span>
+0060     <span class="string">'quantile'</span>, 0);
+0061 conf = <a href="getargs.html" class="code" title="function S = getargs(defaultS, varglist);">getargs</a>(conf, varargin);
+0062 
+0063 
+0064 N = size(data_,1);
+0065 K = size(bayesS,2);
+0066 
+0067 <span class="comment">% data_ is N x D</span>
+0068 
+0069 <span class="keyword">if</span> conf.quantile ~= 0
+0070     histS = <a href="gmmb_generatehist.html" class="code" title="function histS = gmmb_generatehist(bayesS, N);">gmmb_generatehist</a>(bayesS, 1000);
+0071     conf_thresh = <a href="gmmb_frac2lhood.html" class="code" title="function lhood = gmmb_frac2lhood(histS, f);">gmmb_frac2lhood</a>(histS, <span class="keyword">...</span>
+0072                       conf.quantile*ones(1,K));
+0073     clear histS;
+0074 <span class="keyword">end</span>
+0075 
+0076 
+0077 <span class="keyword">if</span> conf.mahalanobis
+0078     <span class="comment">%disp('Using Mahalanobis distance.');</span>
+0079     <span class="comment">% Mahalanobis distance classifier</span>
+0080     sqrmdist = zeros(N,K);
+0081     <span class="keyword">for</span> k = 1:K
+0082         C = size(bayesS(k).mu, 2);
+0083         sqrdist = zeros(N,C);
+0084         <span class="keyword">for</span> c = 1:C
+0085             invs = inv(bayesS(k).sigma(:,:,c));
+0086             mu = bayesS(k).mu(:,c).';
+0087             sqrdist(:,c) = sum((data_*invs).*conj(data_),2) <span class="keyword">...</span>
+0088                 - data_*invs*mu' <span class="keyword">...</span>
+0089                 - (mu*invs*data_').' <span class="keyword">...</span>
+0090                 + mu*invs*mu';
+0091         <span class="keyword">end</span>
+0092         sqrmdist(:,k) = min(real(sqrdist), [], 2);
+0093     <span class="keyword">end</span>
+0094     <span class="keyword">if</span> conf.values ~= 0
+0095         t = sqrmdist;
+0096     <span class="keyword">else</span>
+0097         [a, b] = min(sqrmdist, [], 2);
+0098         t = b';
+0099     <span class="keyword">end</span>
+0100 <span class="keyword">else</span>
+0101     <span class="comment">% GMM Bayesian classifier</span>
+0102     
+0103     <span class="comment">% classify all points simultaneously</span>
+0104     pxomega = <a href="gmmb_pdf.html" class="code" title="function [pdf] = gmmb_pdf(data_, bayesS_);">gmmb_pdf</a>(data_, bayesS);
+0105     tulo = <a href="gmmb_weightprior.html" class="code" title="function p = gmmb_weightprior(pdfmat, bayesS);">gmmb_weightprior</a>(pxomega, bayesS);
+0106     <span class="comment">% tulo is the product of GMM PDF values and class apriories</span>
+0107     
+0108     <span class="comment">% Zero out class likelihoods of samples that do not belong</span>
+0109     <span class="comment">% to the class, based on the density quantile.</span>
+0110     <span class="keyword">if</span> conf.quantile ~= 0
+0111         mask = (pxomega &lt; repmat(conf_thresh, N, 1));
+0112         tulo(mask) = 0;
+0113     <span class="keyword">end</span>
+0114     
+0115     <span class="comment">% Compute posteriors if requested.</span>
+0116     <span class="keyword">if</span> conf.values == 1
+0117         t = <a href="gmmb_normalize.html" class="code" title="function p_out = gmmb_normalize(p_in);">gmmb_normalize</a>(tulo);
+0118     <span class="keyword">else</span>
+0119         t = tulo;
+0120     <span class="keyword">end</span>
+0121 
+0122     <span class="comment">% Find the classification outcome if requested</span>
+0123     <span class="comment">% Mark the samples that got into none of the known classes</span>
+0124     <span class="keyword">if</span> (conf.values == 0)
+0125         t = <a href="gmmb_decide.html" class="code" title="function labels = gmmb_decide(p_in);">gmmb_decide</a>(t);
+0126     <span class="keyword">end</span>
+0127 <span class="keyword">end</span>
+0128</pre></div>
+<hr><address>Generated on Thu 14-Apr-2005 13:50:22 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

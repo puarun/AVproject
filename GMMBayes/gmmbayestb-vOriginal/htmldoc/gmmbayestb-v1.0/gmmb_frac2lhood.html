@@ -1,0 +1,136 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of gmmb_frac2lhood</title>
+  <meta name="keywords" content="gmmb_frac2lhood">
+  <meta name="description" content="GMMB_FRAC2LHOOD   Map density quantiles to PDF threshold values">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">gmmbayestb-v1.0</a> &gt; gmmb_frac2lhood.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for gmmbayestb-v1.0&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>gmmb_frac2lhood
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>GMMB_FRAC2LHOOD   Map density quantiles to PDF threshold values</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function lhood = gmmb_frac2lhood(histS, f); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">GMMB_FRAC2LHOOD   Map density quantiles to PDF threshold values
+
+    lhood = GMMB_FRAC2LHOOD(histS, f)
+
+    histS   K-element histS cell array created by gmmb_hist or
+            gmmb_generatehist.
+    lhood   N x K array of likelihood values.
+    f       N x K array of density quantile values
+
+    This function finds the likelihood threshold value corresponding to
+    each density quantile value.
+    For each column k in 1..K, the likelihood value is found from histS{k},
+    so that each column may represent a different distribution.
+
+    See gmmb_hist, gmmb_generatehist, gmmb_lhood2frac, gmmb_fracthresh
+
+ References:
+   [1] Paalanen, P., Kamarainen, J.-K., Ilonen, J., Kälviäinen, H.,
+    Feature Representation and Discrimination Based on Gaussian Mixture Model
+    Probability Densities - Practices and Algorithms, Research Report 95,
+    Lappeenranta University of Technology, Department of Information
+    Technology, 2005.
+
+ Author(s):
+    Pekka Paalanen &lt;pekka.paalanen@lut.fi&gt;
+    Jarmo Ilonen &lt;jarmo.ilonen@lut.fi&gt;
+    Joni Kamarainen &lt;Joni.Kamarainen@lut.fi&gt;
+
+ Copyright:
+
+   Bayesian Classifier with Gaussian Mixture Model Pdf
+   functionality is Copyright (C) 2004 by Pekka Paalanen and
+   Joni-Kristian Kamarainen.
+
+   $Name:  $ $Revision: 1.2 $  $Date: 2005/04/14 10:33:34 $</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="gmmb_classify.html" class="code" title="function [t] = gmmb_classify(bayesS, data_, varargin);">gmmb_classify</a>	GMMB_CLASSIFY Classify data using Bayesian or Mahalanobis distance classifier.</li><li><a href="gmmb_fracthresh.html" class="code" title="function mask = gmmb_fracthresh(pdfmat, histS, thr);">gmmb_fracthresh</a>	GMMB_FRACTHRESH    Threshold PDF values according to density quantile.</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">%GMMB_FRAC2LHOOD   Map density quantiles to PDF threshold values</span>
+0002 <span class="comment">%</span>
+0003 <span class="comment">%    lhood = GMMB_FRAC2LHOOD(histS, f)</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">%    histS   K-element histS cell array created by gmmb_hist or</span>
+0006 <span class="comment">%            gmmb_generatehist.</span>
+0007 <span class="comment">%    lhood   N x K array of likelihood values.</span>
+0008 <span class="comment">%    f       N x K array of density quantile values</span>
+0009 <span class="comment">%</span>
+0010 <span class="comment">%    This function finds the likelihood threshold value corresponding to</span>
+0011 <span class="comment">%    each density quantile value.</span>
+0012 <span class="comment">%    For each column k in 1..K, the likelihood value is found from histS{k},</span>
+0013 <span class="comment">%    so that each column may represent a different distribution.</span>
+0014 <span class="comment">%</span>
+0015 <span class="comment">%    See gmmb_hist, gmmb_generatehist, gmmb_lhood2frac, gmmb_fracthresh</span>
+0016 <span class="comment">%</span>
+0017 <span class="comment">% References:</span>
+0018 <span class="comment">%   [1] Paalanen, P., Kamarainen, J.-K., Ilonen, J., Kälviäinen, H.,</span>
+0019 <span class="comment">%    Feature Representation and Discrimination Based on Gaussian Mixture Model</span>
+0020 <span class="comment">%    Probability Densities - Practices and Algorithms, Research Report 95,</span>
+0021 <span class="comment">%    Lappeenranta University of Technology, Department of Information</span>
+0022 <span class="comment">%    Technology, 2005.</span>
+0023 <span class="comment">%</span>
+0024 <span class="comment">% Author(s):</span>
+0025 <span class="comment">%    Pekka Paalanen &lt;pekka.paalanen@lut.fi&gt;</span>
+0026 <span class="comment">%    Jarmo Ilonen &lt;jarmo.ilonen@lut.fi&gt;</span>
+0027 <span class="comment">%    Joni Kamarainen &lt;Joni.Kamarainen@lut.fi&gt;</span>
+0028 <span class="comment">%</span>
+0029 <span class="comment">% Copyright:</span>
+0030 <span class="comment">%</span>
+0031 <span class="comment">%   Bayesian Classifier with Gaussian Mixture Model Pdf</span>
+0032 <span class="comment">%   functionality is Copyright (C) 2004 by Pekka Paalanen and</span>
+0033 <span class="comment">%   Joni-Kristian Kamarainen.</span>
+0034 <span class="comment">%</span>
+0035 <span class="comment">%   $Name:  $ $Revision: 1.2 $  $Date: 2005/04/14 10:33:34 $</span>
+0036 <span class="comment">%</span>
+0037 
+0038 <a name="_sub0" href="#_subfunctions" class="code">function lhood = gmmb_frac2lhood(histS, f);</a>
+0039 
+0040 <span class="keyword">if</span> any(f(:)&gt;1 | f(:)&lt;0)
+0041     error(<span class="string">'Density quantile values must be in the range [0,1].'</span>);
+0042 <span class="keyword">end</span>
+0043 
+0044 lhood = zeros(size(f));
+0045 
+0046 K = size(f, 2);
+0047 
+0048 <span class="keyword">for</span> k = 1:K
+0049     v = shiftdim(histS{k});
+0050     len_v = length(v);
+0051     nf = (1-f(:,k)) .* (len_v-1) +1;
+0052     i = floor(nf);
+0053 
+0054     v(len_v+1) = v(len_v);
+0055     lhood(:, k) = v(i) + ( nf-i ) .* ( v(i+1) - v(i) );
+0056 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Thu 14-Apr-2005 13:50:22 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

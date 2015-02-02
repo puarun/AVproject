@@ -1,0 +1,153 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of gmmbvl_em_step</title>
+  <meta name="keywords" content="gmmbvl_em_step">
+  <meta name="description" content="gmmbvl_em_step - EM learning step for multivariate Gaussian mixtures">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">gmmbayestb-v1.0</a> &gt; gmmbvl_em_step.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for gmmbayestb-v1.0&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>gmmbvl_em_step
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>gmmbvl_em_step - EM learning step for multivariate Gaussian mixtures</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [W,M,R] = gmmbvl_em_step(X,W,M,R,P,plo) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">gmmbvl_em_step - EM learning step for multivariate Gaussian mixtures
+
+[W,M,R] = gmmbvl_em_step(X,W,M,R,P,plo)
+  X - (n x d) matrix of input data
+  W - (k x 1) vector of mixing weights
+  M - (k x d) matrix of components means
+  R - (k x d^2) matrix of Cholesky submatrices of components covariances
+      in vector reshaped format. To get the covariance of component k:
+      Rk = reshape(R(k,:),d,d); S = Rk'*Rk;
+  P - (n x k) posterior probabilities of all components (from previous EM step)
+  plo - if 1 then plot ellipses for 2-d data
+returns
+  W - (k x 1) matrix of components priors
+  M - (k x d) matrix of components means
+  R - (k x d^2) matrix of Cholesky submatrices of components covariances</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="gmmbvl_ellipse.html" class="code" title="function h = gmmbvl_ellipse(ra,rb,ang,x0,y0,C,Nb)">gmmbvl_ellipse</a>	gmmbvl_Ellipse adds ellipses to the current plot</li><li><a href="gmmbvl_em_gauss.html" class="code" title="function L = gmmbvl_em_gauss(X,M,R)">gmmbvl_em_gauss</a>	gmmbvl_em_gauss - compute likelihoods for all points and all components</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="gmmbvl_em.html" class="code" title="function [W,M,R,varargout] = gmmbvl_em(X,kmax,nr_of_cand,plo,dia, logging)">gmmbvl_em</a>	gmmbvl_em - EM algorithm for adaptive multivariate Gaussian mixtures</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [W,M,R] = gmmbvl_em_step(X,W,M,R,P,plo)</a>
+0002 <span class="comment">%gmmbvl_em_step - EM learning step for multivariate Gaussian mixtures</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">%[W,M,R] = gmmbvl_em_step(X,W,M,R,P,plo)</span>
+0005 <span class="comment">%  X - (n x d) matrix of input data</span>
+0006 <span class="comment">%  W - (k x 1) vector of mixing weights</span>
+0007 <span class="comment">%  M - (k x d) matrix of components means</span>
+0008 <span class="comment">%  R - (k x d^2) matrix of Cholesky submatrices of components covariances</span>
+0009 <span class="comment">%      in vector reshaped format. To get the covariance of component k:</span>
+0010 <span class="comment">%      Rk = reshape(R(k,:),d,d); S = Rk'*Rk;</span>
+0011 <span class="comment">%  P - (n x k) posterior probabilities of all components (from previous EM step)</span>
+0012 <span class="comment">%  plo - if 1 then plot ellipses for 2-d data</span>
+0013 <span class="comment">%returns</span>
+0014 <span class="comment">%  W - (k x 1) matrix of components priors</span>
+0015 <span class="comment">%  M - (k x d) matrix of components means</span>
+0016 <span class="comment">%  R - (k x d^2) matrix of Cholesky submatrices of components covariances</span>
+0017 
+0018 <span class="comment">% Nikos Vlassis, 2000</span>
+0019 
+0020 <span class="comment">%</span>
+0021 <span class="comment">% $Name:  $</span>
+0022 
+0023 [n,d] = size(X);
+0024 
+0025 
+0026 <span class="keyword">if</span> plo 
+0027     figure(1);
+0028     <span class="keyword">if</span> d == 1
+0029         plot(X,zeros(n,1),<span class="string">'k+'</span>);
+0030     <span class="keyword">else</span>
+0031         plot(X(:,1),X(:,2),<span class="string">'g+'</span>);
+0032     <span class="keyword">end</span>
+0033     hold on;
+0034 <span class="keyword">end</span>
+0035 
+0036 Psum = sum(P,1);
+0037 
+0038 <span class="keyword">for</span> j = 1:length(W)
+0039     <span class="keyword">if</span> Psum(j) &gt; eps
+0040         <span class="comment">% update mixing weight</span>
+0041         W(j) = Psum(j) / n;
+0042 
+0043         <span class="comment">% update mean</span>
+0044         M(j,:) = P(:,j)' * X ./ Psum(j);
+0045     
+0046         <span class="comment">% update covariance matrix</span>
+0047         Mj = repmat(M(j,:),n,1);
+0048         Sj = ((X - Mj) .* repmat(P(:,j),1,d))' * (X - Mj) ./ <span class="keyword">...</span>
+0049            repmat(Psum(j),d,d);
+0050 
+0051         <span class="comment">% check for singularities</span>
+0052         [U,L,V] = svd(Sj); 
+0053         l = diag(L);
+0054         <span class="keyword">if</span> (min(l) &gt; eps) &amp; (max(l)/min(l) &lt; 1e4)
+0055             [Rj,p] = chol(Sj);
+0056             <span class="keyword">if</span> p == 0
+0057                 R(j,:) = Rj(:)';
+0058             <span class="keyword">end</span>
+0059         <span class="keyword">end</span>
+0060 
+0061         <span class="comment">% plot ellipses</span>
+0062         <span class="keyword">if</span> plo
+0063             <span class="keyword">if</span> d == 1
+0064                 x = linspace(min(X) - 3*max(R), <span class="keyword">...</span>
+0065                    max(X) + 3*max(R), 500 )';
+0066                 Lx = <a href="gmmbvl_em_gauss.html" class="code" title="function L = gmmbvl_em_gauss(X,M,R)">gmmbvl_em_gauss</a>(x,M,R);
+0067                 Fx = Lx*W;
+0068                 plot(x,Fx,<span class="string">'k-'</span>);
+0069             <span class="keyword">else</span>
+0070                 Rk = reshape(R(j,:),d,d); S = Rk'*Rk;l=svd(S);
+0071                 phi = acos(V(1,1));
+0072                 <span class="keyword">if</span> V(2,1) &lt; 0
+0073                     phi = 2*pi - phi;
+0074                 <span class="keyword">end</span>
+0075                 plot(M(j,1),M(j,2),<span class="string">'k.'</span>,M(j,1),M(j,2),<span class="string">'k+'</span>);
+0076                 <a href="gmmbvl_ellipse.html" class="code" title="function h = gmmbvl_ellipse(ra,rb,ang,x0,y0,C,Nb)">gmmbvl_ellipse</a>( 2*sqrt(l(1)), 2*sqrt(l(2)), <span class="keyword">...</span>
+0077                    phi, M(j,1), M(j,2),<span class="string">'k'</span> );
+0078             <span class="keyword">end</span>
+0079         <span class="keyword">end</span>
+0080     <span class="keyword">end</span>
+0081 <span class="keyword">end</span>
+0082 
+0083 <span class="keyword">if</span> plo
+0084     <span class="keyword">if</span>  d==2
+0085         a = (max(X(:,1)) - min(X(:,1))) / 10;
+0086         b = (max(X(:,2)) - min(X(:,2))) / 10;
+0087         axis([min(X(:,1))-a max(X(:,1))+a min(X(:,2))-b max(X(:,2))+b]);
+0088     <span class="keyword">end</span>
+0089     drawnow;
+0090     hold off;
+0091 <span class="keyword">end</span>
+0092 
+0093</pre></div>
+<hr><address>Generated on Thu 14-Apr-2005 13:50:22 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

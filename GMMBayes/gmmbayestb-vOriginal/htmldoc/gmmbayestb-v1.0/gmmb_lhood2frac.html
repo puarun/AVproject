@@ -1,0 +1,169 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of gmmb_lhood2frac</title>
+  <meta name="keywords" content="gmmb_lhood2frac">
+  <meta name="description" content="GMMB_LHOOD2FRAC   Map likelihood values to density quantiles">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">gmmbayestb-v1.0</a> &gt; gmmb_lhood2frac.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for gmmbayestb-v1.0&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>gmmb_lhood2frac
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>GMMB_LHOOD2FRAC   Map likelihood values to density quantiles</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function fracmat = gmmb_lhood2frac(histS, lhood); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">GMMB_LHOOD2FRAC   Map likelihood values to density quantiles
+
+    f = GMMB_LHOOD2FRAC(histS, lhood)
+
+    histS   K-element cell array created by gmmb_hist or gmmb_generatehist
+    lhood   N x K array of likelihood values.
+    f       N x K array of density quantile values
+
+    This function finds the corresponding density quantile value of each
+    likelihood value in the &quot;lhood&quot; array.
+    For each column k in 1..K, the density quantile is found from histS{k},
+    so that each column may represent a different distribution.
+
+    See gmmb_hist, gmmb_generatehist, gmmb_frac2lhood, gmmb_fracthresh
+
+ References:
+   [1] Paalanen, P., Kamarainen, J.-K., Ilonen, J., Kälviäinen, H.,
+    Feature Representation and Discrimination Based on Gaussian Mixture Model
+    Probability Densities - Practices and Algorithms, Research Report 95,
+    Lappeenranta University of Technology, Department of Information
+    Technology, 2005.
+
+ Author(s):
+    Pekka Paalanen &lt;pekka.paalanen@lut.fi&gt;
+    Jarmo Ilonen &lt;jarmo.ilonen@lut.fi&gt;
+    Joni Kamarainen &lt;Joni.Kamarainen@lut.fi&gt;
+
+ Copyright:
+
+   Bayesian Classifier with Gaussian Mixture Model Pdf
+   functionality is Copyright (C) 2004 by Pekka Paalanen and
+   Joni-Kristian Kamarainen.
+
+   $Name:  $ $Revision: 1.2 $  $Date: 2005/04/14 10:33:34 $</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function f = my_l2f_bin(v, lhoods);</a></li></ul>
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">%GMMB_LHOOD2FRAC   Map likelihood values to density quantiles</span>
+0002 <span class="comment">%</span>
+0003 <span class="comment">%    f = GMMB_LHOOD2FRAC(histS, lhood)</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">%    histS   K-element cell array created by gmmb_hist or gmmb_generatehist</span>
+0006 <span class="comment">%    lhood   N x K array of likelihood values.</span>
+0007 <span class="comment">%    f       N x K array of density quantile values</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">%    This function finds the corresponding density quantile value of each</span>
+0010 <span class="comment">%    likelihood value in the &quot;lhood&quot; array.</span>
+0011 <span class="comment">%    For each column k in 1..K, the density quantile is found from histS{k},</span>
+0012 <span class="comment">%    so that each column may represent a different distribution.</span>
+0013 <span class="comment">%</span>
+0014 <span class="comment">%    See gmmb_hist, gmmb_generatehist, gmmb_frac2lhood, gmmb_fracthresh</span>
+0015 <span class="comment">%</span>
+0016 <span class="comment">% References:</span>
+0017 <span class="comment">%   [1] Paalanen, P., Kamarainen, J.-K., Ilonen, J., Kälviäinen, H.,</span>
+0018 <span class="comment">%    Feature Representation and Discrimination Based on Gaussian Mixture Model</span>
+0019 <span class="comment">%    Probability Densities - Practices and Algorithms, Research Report 95,</span>
+0020 <span class="comment">%    Lappeenranta University of Technology, Department of Information</span>
+0021 <span class="comment">%    Technology, 2005.</span>
+0022 <span class="comment">%</span>
+0023 <span class="comment">% Author(s):</span>
+0024 <span class="comment">%    Pekka Paalanen &lt;pekka.paalanen@lut.fi&gt;</span>
+0025 <span class="comment">%    Jarmo Ilonen &lt;jarmo.ilonen@lut.fi&gt;</span>
+0026 <span class="comment">%    Joni Kamarainen &lt;Joni.Kamarainen@lut.fi&gt;</span>
+0027 <span class="comment">%</span>
+0028 <span class="comment">% Copyright:</span>
+0029 <span class="comment">%</span>
+0030 <span class="comment">%   Bayesian Classifier with Gaussian Mixture Model Pdf</span>
+0031 <span class="comment">%   functionality is Copyright (C) 2004 by Pekka Paalanen and</span>
+0032 <span class="comment">%   Joni-Kristian Kamarainen.</span>
+0033 <span class="comment">%</span>
+0034 <span class="comment">%   $Name:  $ $Revision: 1.2 $  $Date: 2005/04/14 10:33:34 $</span>
+0035 <span class="comment">%</span>
+0036 
+0037 <a name="_sub0" href="#_subfunctions" class="code">function fracmat = gmmb_lhood2frac(histS, lhood);</a>
+0038 
+0039 fracmat = zeros(size(lhood));
+0040 
+0041 K = size(lhood, 2);
+0042 
+0043 <span class="keyword">for</span> k = 1:K
+0044     fracmat(:, k) = <a href="#_sub1" class="code" title="subfunction f = my_l2f_bin(v, lhoods);">my_l2f_bin</a>(histS{k}, lhood(:,k));
+0045 <span class="keyword">end</span>
+0046 
+0047 
+0048 <span class="comment">% binary search, linear interpolating version</span>
+0049 <a name="_sub1" href="#_subfunctions" class="code">function f = my_l2f_bin(v, lhoods);</a>
+0050 
+0051 f = zeros(size(lhoods));
+0052 len_v = length(v);
+0053 
+0054 <span class="keyword">for</span> i = 1:length(lhoods)
+0055     x = lhoods(i);
+0056     a = 1;
+0057     b = len_v+1;
+0058     
+0059     <span class="keyword">if</span> x &lt; v(a)
+0060         f(i) = 1;
+0061         <span class="keyword">continue</span>;
+0062     <span class="keyword">end</span>
+0063     
+0064     <span class="keyword">if</span> x &gt;= v(b-1)
+0065         f(i) = 0;
+0066         <span class="keyword">continue</span>;
+0067     <span class="keyword">end</span>
+0068     
+0069     <span class="keyword">while</span> (b-a) &gt; 1
+0070         m = floor((a+b)/2);
+0071         <span class="keyword">if</span>( v(m) &gt; x)
+0072             b = m;
+0073         <span class="keyword">else</span>
+0074             a = m;
+0075         <span class="keyword">end</span>
+0076     <span class="keyword">end</span>
+0077     
+0078     h = v(b) - v(a);
+0079     <span class="keyword">if</span> h ~= 0
+0080         sf = (x - v(a)) / h;
+0081     <span class="keyword">else</span>
+0082         sf = 0.5;
+0083     <span class="keyword">end</span>
+0084     
+0085     f(i) = 1 - (a+sf-1) / (len_v-1);
+0086 <span class="keyword">end</span>
+0087 
+0088</pre></div>
+<hr><address>Generated on Thu 14-Apr-2005 13:50:22 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

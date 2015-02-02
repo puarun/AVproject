@@ -1,0 +1,211 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of gmmbvl_kmeans</title>
+  <meta name="keywords" content="gmmbvl_kmeans">
+  <meta name="description" content="gmmbvl_kmeans - clustering with k-means (or Generalized Lloyd or LBG) algorithm">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">gmmbayestb-v1.0</a> &gt; gmmbvl_kmeans.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for gmmbayestb-v1.0&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>gmmbvl_kmeans
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>gmmbvl_kmeans - clustering with k-means (or Generalized Lloyd or LBG) algorithm</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [Er,M,nb] = gmmbvl_kmeans(X,T,kmax,dyn,bs, killing, pl) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> gmmbvl_kmeans - clustering with k-means (or Generalized Lloyd or LBG) algorithm
+
+ [Er,M,nb] = gmmbvl_kmeans(X,T,kmax,dyn,dnb,killing,p)
+
+ X    - (n x d) d-dimensional input data
+ T    - (? x d) d-dimensional test data
+ kmax - (maximal) number of means
+ dyn  - 0: standard k-means, unif. random subset of data init. 
+        1: fast global k-means
+        2: non-greedy, just use kdtree to initiallize the means
+        3: fast global k-means, use kdtree for potential insertion locations  
+        4: global k-means algorithm
+ dnb  - desired number of buckets on the kd-tree  
+ pl   - plot the fitting process
+
+ returns
+ Er - sum of squared distances to nearest mean (second column for test data)
+ M  - (k x d) matrix of cluster centers; k is computed dynamically
+ nb - number of nodes on the kd-tree (option dyn=[2,3])
+
+ Nikos Vlassis &amp; Sjaak Verbeek, 2001, http://www.science.uva.nl/~jverbeek</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="gmmbvl_sqdist.html" class="code" title="function d = gmmbvl_sqdist(a,b)">gmmbvl_sqdist</a>	gmmbvl_sqdist - computes pairwise squared Euclidean distances between points</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="gmmbvl_em_init_km.html" class="code" title="function [W,M,R,P,sigma] = gmmbvl_em_init_km(X,k,dyn)">gmmbvl_em_init_km</a>	gmmbvl_em_init_km - initialization of EM for Gaussian mixtures</li></ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function varargout = kdtree(varargin);</a></li></ul>
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [Er,M,nb] = gmmbvl_kmeans(X,T,kmax,dyn,bs, killing, pl)</a>
+0002 <span class="comment">% gmmbvl_kmeans - clustering with k-means (or Generalized Lloyd or LBG) algorithm</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% [Er,M,nb] = gmmbvl_kmeans(X,T,kmax,dyn,dnb,killing,p)</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">% X    - (n x d) d-dimensional input data</span>
+0007 <span class="comment">% T    - (? x d) d-dimensional test data</span>
+0008 <span class="comment">% kmax - (maximal) number of means</span>
+0009 <span class="comment">% dyn  - 0: standard k-means, unif. random subset of data init.</span>
+0010 <span class="comment">%        1: fast global k-means</span>
+0011 <span class="comment">%        2: non-greedy, just use kdtree to initiallize the means</span>
+0012 <span class="comment">%        3: fast global k-means, use kdtree for potential insertion locations</span>
+0013 <span class="comment">%        4: global k-means algorithm</span>
+0014 <span class="comment">% dnb  - desired number of buckets on the kd-tree</span>
+0015 <span class="comment">% pl   - plot the fitting process</span>
+0016 <span class="comment">%</span>
+0017 <span class="comment">% returns</span>
+0018 <span class="comment">% Er - sum of squared distances to nearest mean (second column for test data)</span>
+0019 <span class="comment">% M  - (k x d) matrix of cluster centers; k is computed dynamically</span>
+0020 <span class="comment">% nb - number of nodes on the kd-tree (option dyn=[2,3])</span>
+0021 <span class="comment">%</span>
+0022 <span class="comment">% Nikos Vlassis &amp; Sjaak Verbeek, 2001, http://www.science.uva.nl/~jverbeek</span>
+0023 
+0024 <span class="comment">%</span>
+0025 <span class="comment">% $Name:  $</span>
+0026 
+0027 Er=[]; TEr=[];              <span class="comment">% error monitorring</span>
+0028 
+0029 [n,d]     = size(X);
+0030 
+0031 THRESHOLD = 1e-4;   <span class="comment">% relative change in error that is regarded as convergence</span>
+0032 nb        = 0;  
+0033 
+0034 <span class="comment">% initialize</span>
+0035 <span class="keyword">if</span> dyn==1            <span class="comment">% greedy insertion, possible at all points</span>
+0036   k      = 1;
+0037   M      = mean(X);
+0038   K      = <a href="gmmbvl_sqdist.html" class="code" title="function d = gmmbvl_sqdist(a,b)">gmmbvl_sqdist</a>(X',X');
+0039   L      = X;
+0040 <span class="keyword">elseif</span> dyn==2        <span class="comment">% use kd-tree results as means</span>
+0041   k      = kmax;
+0042   M      = <a href="#_sub1" class="code" title="subfunction varargout = kdtree(varargin);">kdtree</a>(X,[1:n]',[],1.5*n/k); 
+0043   nb     = size(M,1);
+0044   dyn    = 0;
+0045 <span class="keyword">elseif</span> dyn==3
+0046   L      = <a href="#_sub1" class="code" title="subfunction varargout = kdtree(varargin);">kdtree</a>(X,[1:n]',[],1.5*n/bs);  
+0047   nb     = size(L,1);
+0048   k      = 1;
+0049   M      = mean(X);
+0050   K      = <a href="gmmbvl_sqdist.html" class="code" title="function d = gmmbvl_sqdist(a,b)">gmmbvl_sqdist</a>(X',L');
+0051 <span class="keyword">elseif</span> dyn==4
+0052   k      = 1;
+0053   M      = mean(X);
+0054   K      = <a href="gmmbvl_sqdist.html" class="code" title="function d = gmmbvl_sqdist(a,b)">gmmbvl_sqdist</a>(X',X');
+0055   L      = X;
+0056 <span class="keyword">else</span>                 <span class="comment">% use random subset of data as means</span>
+0057   k      = kmax;
+0058   tmp    = randperm(n);
+0059   M      = X(tmp(1:k),:); 
+0060 <span class="keyword">end</span>
+0061 
+0062 Wold = realmax;
+0063 
+0064 <span class="keyword">while</span> k &lt;= kmax
+0065   kill = [];
+0066 
+0067   <span class="comment">% squared Euclidean distances to means; Dist (k x n)</span>
+0068   Dist = <a href="gmmbvl_sqdist.html" class="code" title="function d = gmmbvl_sqdist(a,b)">gmmbvl_sqdist</a>(M',X');  
+0069 
+0070   <span class="comment">% Voronoi partitioning</span>
+0071   [Dwin,Iwin] = min(Dist',[],2);
+0072 
+0073   <span class="comment">% error measures and mean updates</span>
+0074   Wnew = sum(Dwin);
+0075  
+0076   <span class="comment">% update VQ's</span>
+0077   <span class="keyword">for</span> i=1:size(M,1)
+0078     I = find(Iwin==i);
+0079     <span class="keyword">if</span> size(I,1)&gt;d
+0080       M(i,:) = mean(X(I,:));
+0081   <span class="keyword">elseif</span> killing==1
+0082       kill = [kill; i];
+0083     <span class="keyword">end</span>
+0084   <span class="keyword">end</span>
+0085 
+0086  <span class="keyword">if</span> 1-Wnew/Wold &lt; THRESHOLD*(10-9*(k==kmax))
+0087     <span class="keyword">if</span> dyn &amp; k &lt; kmax
+0088    
+0089       <span class="keyword">if</span> dyn == 4
+0090         best_Er = Wnew; 
+0091 
+0092         <span class="keyword">for</span> i=1:n;
+0093           Wold = Inf;
+0094              Wtmp = Wnew;
+0095           Mtmp = [M; X(i,:)];
+0096           <span class="keyword">while</span> (1-Wtmp/Wold) &gt; THRESHOLD*10; 
+0097         Wold = Wtmp;
+0098             Dist = <a href="gmmbvl_sqdist.html" class="code" title="function d = gmmbvl_sqdist(a,b)">gmmbvl_sqdist</a>(Mtmp',X');  
+0099             [Dwin,Iwin] = min(Dist',[],2);
+0100             Wtmp = sum(Dwin);
+0101             <span class="keyword">for</span> i = 1 : size(Mtmp,1)
+0102               I = find(Iwin==i);
+0103               <span class="keyword">if</span> size(I,1)&gt;d; Mtmp(i,:) = mean(X(I,:)); <span class="keyword">end</span>
+0104             <span class="keyword">end</span>
+0105           <span class="keyword">end</span>
+0106           <span class="keyword">if</span> Wtmp &lt; best_Er;   best_M = Mtmp; best_Er = Wtmp; <span class="keyword">end</span>
+0107         <span class="keyword">end</span>
+0108 
+0109         M = best_M;
+0110         Wnew = best_Er;
+0111         <span class="keyword">if</span> ~isempty(T); tmp=<a href="gmmbvl_sqdist.html" class="code" title="function d = gmmbvl_sqdist(a,b)">gmmbvl_sqdist</a>(T',M'); TEr=[TEr; sum(min(tmp,[],2))];<span class="keyword">end</span>;
+0112         Er=[Er; Wnew];
+0113         k = k+1;
+0114 
+0115       <span class="keyword">else</span> 
+0116         <span class="comment">% try to add a new cluster on some point x_i</span>
+0117         [tmp,new] = max(sum(max(repmat(Dwin,1,size(K,2))-K,0)));
+0118         k = k+1;
+0119         M = [M; L(new,:)+eps];
+0120         <span class="keyword">if</span> pl;        fprintf( <span class="string">'new cluster, k=%d\n'</span>, k);      <span class="keyword">end</span>
+0121         [Dwin,Iwin] = min(Dist',[],2);
+0122     Wnew        = sum(Dwin);Er=[Er; Wnew];
+0123         <span class="keyword">if</span> ~isempty(T); tmp=<a href="gmmbvl_sqdist.html" class="code" title="function d = gmmbvl_sqdist(a,b)">gmmbvl_sqdist</a>(T',M'); TEr=[TEr; sum(min(tmp,[],2))];<span class="keyword">end</span>;
+0124       <span class="keyword">end</span>
+0125     <span class="keyword">else</span>
+0126       k = kmax+1;
+0127     <span class="keyword">end</span>  
+0128   <span class="keyword">end</span>
+0129   Wold = Wnew;
+0130   <span class="keyword">if</span> pl
+0131     figure(1); plot(X(:,1),X(:,2),<span class="string">'g.'</span>,M(:,1),M(:,2),<span class="string">'k.'</span>,M(:,1),M(:,2),<span class="string">'k+'</span>);
+0132     drawnow;
+0133   <span class="keyword">end</span>
+0134 <span class="keyword">end</span>
+0135 
+0136  Er=[Er; Wnew];
+0137  <span class="keyword">if</span> ~isempty(T); tmp=<a href="gmmbvl_sqdist.html" class="code" title="function d = gmmbvl_sqdist(a,b)">gmmbvl_sqdist</a>(T',M'); TEr=[TEr; sum(min(tmp,[],2))]; Er=[Er TEr];<span class="keyword">end</span>;
+0138 M(kill,:)=[];
+0139 
+0140 
+0141 
+0142 <a name="_sub1" href="#_subfunctions" class="code">function varargout = kdtree(varargin);</a>
+0143 error(<span class="string">'gmmbvl_kmeans:kdtree was called, but there is no implementation. This is an internal error.'</span>);</pre></div>
+<hr><address>Generated on Thu 14-Apr-2005 13:50:22 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

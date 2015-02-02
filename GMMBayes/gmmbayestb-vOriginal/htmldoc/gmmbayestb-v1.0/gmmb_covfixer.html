@@ -1,0 +1,174 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of gmmb_covfixer</title>
+  <meta name="keywords" content="gmmb_covfixer">
+  <meta name="description" content="GMMB_COVFIXER   - force matrix to be a valid covariance matrix">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">gmmbayestb-v1.0</a> &gt; gmmb_covfixer.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for gmmbayestb-v1.0&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>gmmb_covfixer
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>GMMB_COVFIXER   - force matrix to be a valid covariance matrix</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [nsigma, varargout] = gmmb_covfixer(sigma); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">GMMB_COVFIXER   - force matrix to be a valid covariance matrix
+
+ covmatrix = GMMB_COVFIXER(matrix)
+ Matrix is forced (complex conjugate) symmetric,
+ positive definite and its diagonal real valued.
+
+ [covmatrix, loops] = GMMB_COVFIXER(...)
+    loops - number of rounds the positive definite fixer had to run.
+
+ [covmatrix, loops, symerr] = GMMB_COVFIXER(...)
+    symerr - symmetry error matrix</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="warning_wrap.html" class="code" title="function [] = warning_wrap(varargin);">warning_wrap</a>	WARNING_WRAP()  warning function wrapper</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="gmmb_em.html" class="code" title="function [estimate, varargout] = gmmb_em(data, varargin);">gmmb_em</a>	GMMB_EM     - EM estimated GMM parameters</li><li><a href="gmmb_em_init_cmeans1.html" class="code" title="function initS = gmmb_em_init_cmeans1(data, C);">gmmb_em_init_cmeans1</a>	GMMB_EM_INIT_CMEANS1</li><li><a href="gmmb_em_init_cmeans2.html" class="code" title="function initS = gmmb_em_init_cmeans2(data, C);">gmmb_em_init_cmeans2</a>	GMMB_EM_INIT_CMEANS2</li><li><a href="gmmb_em_init_fcm1.html" class="code" title="function initS = gmmb_em_init_fcm1(data, C, verbose);">gmmb_em_init_fcm1</a>	GMMB_EM_INIT_FCM1</li><li><a href="gmmb_fj.html" class="code" title="function [estimate, varargout] = gmmb_fj(data, varargin);">gmmb_fj</a>	GMMB_FJ     - Figueiredo-Jain estimated GMM parameters</li></ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function [t,R] = isspd(Sigma)</a></li><li><a href="#_sub2" class="code">function nsigma = imagfixer(sigma);</a></li></ul>
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">%GMMB_COVFIXER   - force matrix to be a valid covariance matrix</span>
+0002 <span class="comment">%</span>
+0003 <span class="comment">% covmatrix = GMMB_COVFIXER(matrix)</span>
+0004 <span class="comment">% Matrix is forced (complex conjugate) symmetric,</span>
+0005 <span class="comment">% positive definite and its diagonal real valued.</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">% [covmatrix, loops] = GMMB_COVFIXER(...)</span>
+0008 <span class="comment">%    loops - number of rounds the positive definite fixer had to run.</span>
+0009 <span class="comment">%</span>
+0010 <span class="comment">% [covmatrix, loops, symerr] = GMMB_COVFIXER(...)</span>
+0011 <span class="comment">%    symerr - symmetry error matrix</span>
+0012 
+0013 <span class="comment">%</span>
+0014 <span class="comment">% $Name:  $</span>
+0015 <span class="comment">% $Id: gmmb_covfixer.m,v 1.2 2004/11/02 09:00:18 paalanen Exp $</span>
+0016 <span class="comment">% Copyright 2003, Pekka Paalanen &lt;pekka.paalanen@lut.fi&gt;</span>
+0017 
+0018 <span class="comment">% except isspd() function which is from The MathWorks Matlab mvnpdf.m.</span>
+0019 
+0020 <a name="_sub0" href="#_subfunctions" class="code">function [nsigma, varargout] = gmmb_covfixer(sigma);</a>
+0021 
+0022 D = size(sigma, 1);
+0023 fixrate = 0.01;
+0024 covfixmat = ones(D) + fixrate*eye(D);
+0025 loops = 0;
+0026 min_limit = eps*10;
+0027 
+0028 <span class="keyword">if</span> ~all( isfinite(sigma(:))  )
+0029     error(<span class="string">'covariance matrix is not finite'</span>);
+0030 <span class="keyword">end</span>
+0031 
+0032 <span class="comment">% Running imagfixer is not counted as covariance fixing,</span>
+0033 <span class="comment">% the changes are assumed to be so small.</span>
+0034 nsigma = <a href="#_sub2" class="code" title="subfunction nsigma = imagfixer(sigma);">imagfixer</a>(sigma);
+0035 
+0036 <span class="keyword">if</span> nargout&gt;2
+0037     varargout(2) = {(sigma-nsigma)};
+0038 <span class="keyword">end</span>
+0039 
+0040 <span class="keyword">while</span> <a href="#_sub1" class="code" title="subfunction [t,R] = isspd(Sigma)">isspd</a>(nsigma) == 0
+0041     <span class="comment">% covariance matrix is not positive definite</span>
+0042     <span class="comment">% fix it</span>
+0043     loops  = loops+1;
+0044     d = diag(nsigma);
+0045     <span class="keyword">if</span> any(d &lt;= min_limit)
+0046         <span class="comment">% negative or zero (&lt;eps) on the diagonal</span>
+0047         m = max(abs(d)) * fixrate;
+0048         neg = min(d);
+0049         <span class="keyword">if</span> neg &lt; 0
+0050             <span class="comment">% there is a negative component on the diagonal</span>
+0051             <span class="comment">% get rid of it.</span>
+0052             addit = (m-neg)*eye(D);
+0053         <span class="keyword">else</span>
+0054             <span class="keyword">if</span> m &lt; min_limit
+0055                 m = min_limit;
+0056             <span class="keyword">end</span>
+0057             addit = m*eye(D);
+0058         <span class="keyword">end</span>
+0059         nsigma = nsigma + addit;
+0060     <span class="keyword">else</span>
+0061         <span class="comment">% increase diagonal values by 1 percent</span>
+0062         nsigma = nsigma .* covfixmat;
+0063     <span class="keyword">end</span>
+0064 <span class="keyword">end</span>
+0065 
+0066 <span class="keyword">if</span> nargout&gt;1
+0067     varargout(1) = {loops};
+0068 <span class="keyword">end</span>
+0069 
+0070 
+0071 <span class="comment">% ------------------</span>
+0072 
+0073 <a name="_sub1" href="#_subfunctions" class="code">function [t,R] = isspd(Sigma)</a>
+0074 <span class="comment">%ISPDS Test if a matrix is positive definite symmetric</span>
+0075 <span class="comment">% T = ISPDS(SIGMA) returns a logical indicating whether the matrix SIGMA is</span>
+0076 <span class="comment">% square, symmetric, and positive definite, i.e., it is a valid full rank</span>
+0077 <span class="comment">% covariance matrix.</span>
+0078 <span class="comment">%</span>
+0079 <span class="comment">% [T,R] = ISPDS(SIGMA) returns the cholesky factor of SIGMA in R.  If SIGMA</span>
+0080 <span class="comment">% is not square symmetric, ISPDS returns [] in R.</span>
+0081 
+0082 <span class="comment">%   Copyright 1993-2002 The MathWorks, Inc.</span>
+0083 <span class="comment">%   Revision: 1.2   Date: 2002/03/28 16:51:27</span>
+0084 
+0085 <span class="comment">% Test for square, symmetric</span>
+0086 <span class="comment">% NOTE: imagfixer already enforces squareness and symmetricity,</span>
+0087 <span class="comment">% and fixing affects only the diagonal, so this is not necessary</span>
+0088 <span class="comment">%[n,m] = size(Sigma);</span>
+0089 <span class="comment">%if (n == m) &amp; all(all(abs(Sigma - Sigma') &lt; 10*eps*max(abs(diag(Sigma)))));</span>
+0090 
+0091     <span class="comment">% Test for positive definiteness</span>
+0092     [R,p] = chol(Sigma);
+0093     <span class="keyword">if</span> p == 0
+0094         t = 1;
+0095     <span class="keyword">else</span>
+0096         t = 0;
+0097     <span class="keyword">end</span>
+0098 
+0099 <span class="comment">%else</span>
+0100 <span class="comment">%    R = [];</span>
+0101 <span class="comment">%    t = 0;</span>
+0102 <span class="comment">%end</span>
+0103 
+0104 <span class="comment">% ------------------</span>
+0105 
+0106 <a name="_sub2" href="#_subfunctions" class="code">function nsigma = imagfixer(sigma);</a>
+0107 
+0108 <span class="comment">% force symmetric</span>
+0109 nsigma = sigma - (sigma - sigma')/2;
+0110 <span class="comment">% purge imag</span>
+0111 purge = imag(diag(nsigma));
+0112 nsigma = nsigma - diag(purge)*1i;
+0113 
+0114 <span class="keyword">if</span> max(purge) &gt; 1e-4
+0115     <a href="warning_wrap.html" class="code" title="function [] = warning_wrap(varargin);">warning_wrap</a>(<span class="string">'gmmbayes:covfixer:imagfixer'</span>, <span class="string">'Quite big imaginary components removed from the diagonal'</span>);
+0116 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Thu 14-Apr-2005 13:50:22 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

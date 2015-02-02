@@ -1,0 +1,199 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of gmmb_gem</title>
+  <meta name="keywords" content="gmmb_gem">
+  <meta name="description" content="GMMB_GEM    - Greedy EM estimated GMM parameters">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">gmmbayestb-v1.0</a> &gt; gmmb_gem.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for gmmbayestb-v1.0&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>gmmb_gem
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>GMMB_GEM    - Greedy EM estimated GMM parameters</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [estimate, varargout] = gmmb_gem(data, varargin); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">GMMB_GEM    - Greedy EM estimated GMM parameters
+ Produces a bayesS struct without 'apriories'
+ This is just a wrapper for the Vlassis Greedy EM algorithm implementation.
+
+ estimate = GMMB_GEM(data[, parameters])
+ [estimate,stats] = GMMB_GEM(...)
+
+ Parameters (default):
+   verbose    print some progress numbers (false)
+   animate    plot data and ellipses during algorithm evaluation (false)
+   Cmax    the maximum number of GMM components
+   ncand    number of candidate locations for each new component (10)
+ At least Cmax should be set explicitly.
+ example:
+    estS = gmmb_gem(data, 'Cmax', 10, 'animate', true);
+
+ References:
+   [1] Vlassis, N., Likas, A., A Greedy EM Algorithm for Gaussian Mixture
+   Learning, Neural Processing Letters 15, Kluwer Academic Publishers, 2002.
+   http://carol.wins.uva.nl/~vlassis/research/learning/index_en.html
+
+ Author(s):
+    Pekka Paalanen &lt;pekka.paalanen@lut.fi&gt;
+
+ Copyright:
+
+   Bayesian Classifier with Gaussian Mixture Model Pdf
+   functionality is Copyright (C) 2003 by Pekka Paalanen and
+   Joni-Kristian Kamarainen.
+
+   $Name:  $ $Revision: 1.1 $  $Date: 2004/11/02 08:32:22 $
+
+
+ Logging
+   parameters
+
+      logging   What kind of logging to do:
+        0 - no logging
+        1 - normal logging
+        2 - extra logging: store all intermediate mixtures
+      If the 'stats' output parameter is defined, then 'logging'
+      defaults to 1, otherwise it is forced to 0.
+
+  the 'stats' struct:
+      iterations: EM iteration count
+      loglikes:   iterations long vector of the log-likelihood
+                NOTE: mean(log(p)), not sum(log(p)) as it should(?)
+    extra logging: (not supported yet)
+      initialmix: parameters for the initial mixture
+      mixtures:   parameters for all intermediate mixtures</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="getargs.html" class="code" title="function S = getargs(defaultS, varglist);">getargs</a>	GETARGS  parse variable argument list into a struct</li><li><a href="gmmbvl_em.html" class="code" title="function [W,M,R,varargout] = gmmbvl_em(X,kmax,nr_of_cand,plo,dia, logging)">gmmbvl_em</a>	gmmbvl_em - EM algorithm for adaptive multivariate Gaussian mixtures</li><li><a href="warning_wrap.html" class="code" title="function [] = warning_wrap(varargin);">warning_wrap</a>	WARNING_WRAP()  warning function wrapper</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="gmmb_create.html" class="code" title="function [bayesS, varargout] = gmmb_create(data, cl, method, varargin);">gmmb_create</a>	GMMB_CREATE - Construct new Bayesian classifier with Gaussian mixture model pdf</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">%GMMB_GEM    - Greedy EM estimated GMM parameters</span>
+0002 <span class="comment">% Produces a bayesS struct without 'apriories'</span>
+0003 <span class="comment">% This is just a wrapper for the Vlassis Greedy EM algorithm implementation.</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">% estimate = GMMB_GEM(data[, parameters])</span>
+0006 <span class="comment">% [estimate,stats] = GMMB_GEM(...)</span>
+0007 <span class="comment">%</span>
+0008 <span class="comment">% Parameters (default):</span>
+0009 <span class="comment">%   verbose    print some progress numbers (false)</span>
+0010 <span class="comment">%   animate    plot data and ellipses during algorithm evaluation (false)</span>
+0011 <span class="comment">%   Cmax    the maximum number of GMM components</span>
+0012 <span class="comment">%   ncand    number of candidate locations for each new component (10)</span>
+0013 <span class="comment">% At least Cmax should be set explicitly.</span>
+0014 <span class="comment">% example:</span>
+0015 <span class="comment">%    estS = gmmb_gem(data, 'Cmax', 10, 'animate', true);</span>
+0016 <span class="comment">%</span>
+0017 <span class="comment">% References:</span>
+0018 <span class="comment">%   [1] Vlassis, N., Likas, A., A Greedy EM Algorithm for Gaussian Mixture</span>
+0019 <span class="comment">%   Learning, Neural Processing Letters 15, Kluwer Academic Publishers, 2002.</span>
+0020 <span class="comment">%   http://carol.wins.uva.nl/~vlassis/research/learning/index_en.html</span>
+0021 <span class="comment">%</span>
+0022 <span class="comment">% Author(s):</span>
+0023 <span class="comment">%    Pekka Paalanen &lt;pekka.paalanen@lut.fi&gt;</span>
+0024 <span class="comment">%</span>
+0025 <span class="comment">% Copyright:</span>
+0026 <span class="comment">%</span>
+0027 <span class="comment">%   Bayesian Classifier with Gaussian Mixture Model Pdf</span>
+0028 <span class="comment">%   functionality is Copyright (C) 2003 by Pekka Paalanen and</span>
+0029 <span class="comment">%   Joni-Kristian Kamarainen.</span>
+0030 <span class="comment">%</span>
+0031 <span class="comment">%   $Name:  $ $Revision: 1.1 $  $Date: 2004/11/02 08:32:22 $</span>
+0032 <span class="comment">%</span>
+0033 <span class="comment">%</span>
+0034 <span class="comment">% Logging</span>
+0035 <span class="comment">%   parameters</span>
+0036 <span class="comment">%</span>
+0037 <span class="comment">%      logging   What kind of logging to do:</span>
+0038 <span class="comment">%        0 - no logging</span>
+0039 <span class="comment">%        1 - normal logging</span>
+0040 <span class="comment">%        2 - extra logging: store all intermediate mixtures</span>
+0041 <span class="comment">%      If the 'stats' output parameter is defined, then 'logging'</span>
+0042 <span class="comment">%      defaults to 1, otherwise it is forced to 0.</span>
+0043 <span class="comment">%</span>
+0044 <span class="comment">%  the 'stats' struct:</span>
+0045 <span class="comment">%      iterations: EM iteration count</span>
+0046 <span class="comment">%      loglikes:   iterations long vector of the log-likelihood</span>
+0047 <span class="comment">%                NOTE: mean(log(p)), not sum(log(p)) as it should(?)</span>
+0048 <span class="comment">%    extra logging: (not supported yet)</span>
+0049 <span class="comment">%      initialmix: parameters for the initial mixture</span>
+0050 <span class="comment">%      mixtures:   parameters for all intermediate mixtures</span>
+0051 <span class="comment">%</span>
+0052 
+0053 <a name="_sub0" href="#_subfunctions" class="code">function [estimate, varargout] = gmmb_gem(data, varargin);</a>
+0054 
+0055 [N, D] = size(data);    <span class="comment">% number of points (n), dimensions (d)</span>
+0056 
+0057 <span class="comment">% defaults</span>
+0058 conf = struct(<span class="keyword">...</span>
+0059     <span class="string">'verbose'</span>, 0, <span class="keyword">...</span>
+0060     <span class="string">'animate'</span>, 0, <span class="keyword">...</span>
+0061     <span class="string">'Cmax'</span>, ceil(min(50, N/(D*D)/3)), <span class="keyword">...</span>
+0062     <span class="string">'ncand'</span>, 10, <span class="keyword">...</span>
+0063     <span class="string">'logging'</span>, 0 <span class="keyword">...</span>
+0064     );
+0065 
+0066 <span class="keyword">if</span> nargout&gt;1
+0067     conf.logging = 1;
+0068     varargout{1} = [];
+0069 <span class="keyword">end</span>
+0070 
+0071 conf = <a href="getargs.html" class="code" title="function S = getargs(defaultS, varglist);">getargs</a>(conf, varargin);
+0072 
+0073 C = conf.Cmax;
+0074 
+0075 N_limit = (D+D*(D+1)/2+1)*3;
+0076 <span class="keyword">if</span> N &lt; N_limit
+0077     <a href="warning_wrap.html" class="code" title="function [] = warning_wrap(varargin);">warning_wrap</a>(<span class="string">'gmmb_gem:data_amount'</span>, <span class="keyword">...</span>
+0078        [<span class="string">'Training data may be insufficient. '</span> <span class="keyword">...</span>
+0079         <span class="string">'Have: '</span> num2str(N) <span class="string">', recommended: &gt;'</span> num2str(N_limit) <span class="keyword">...</span>
+0080         <span class="string">' points.'</span>]);
+0081 <span class="keyword">end</span>
+0082 
+0083 
+0084 <span class="keyword">if</span> nargout&lt;2
+0085     conf.logging=0;
+0086 <span class="keyword">end</span>
+0087 
+0088 [W, M, R, stats] = <a href="gmmbvl_em.html" class="code" title="function [W,M,R,varargout] = gmmbvl_em(X,kmax,nr_of_cand,plo,dia, logging)">gmmbvl_em</a>(data, C, conf.ncand, conf.animate, <span class="keyword">...</span>
+0089                              conf.verbose, conf.logging);
+0090 
+0091 Cfinal = size(R,1);
+0092 sigma = zeros(D, D, Cfinal);
+0093 <span class="keyword">for</span> c = 1:Cfinal
+0094     Rk = reshape(R(c,:),D,D);
+0095     sigma(:,:,c) = Rk' * Rk;
+0096 <span class="keyword">end</span>
+0097 
+0098 estimate = struct(<span class="string">'mu'</span>, M.',<span class="keyword">...</span>
+0099     <span class="string">'sigma'</span>, sigma,<span class="keyword">...</span>
+0100     <span class="string">'weight'</span>, W);
+0101 
+0102 <span class="keyword">if</span>(conf.logging&gt;0)
+0103     varargout{1} = stats;
+0104 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Thu 14-Apr-2005 13:50:22 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

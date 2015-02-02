@@ -1,0 +1,573 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of gmmb_fj</title>
+  <meta name="keywords" content="gmmb_fj">
+  <meta name="description" content="GMMB_FJ     - Figueiredo-Jain estimated GMM parameters">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">gmmbayestb-v1.0</a> &gt; gmmb_fj.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for gmmbayestb-v1.0&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>gmmb_fj
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>GMMB_FJ     - Figueiredo-Jain estimated GMM parameters</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [estimate, varargout] = gmmb_fj(data, varargin); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">GMMB_FJ     - Figueiredo-Jain estimated GMM parameters
+ Produces a bayesS struct without 'apriories'.
+
+ Works with complex numbers directly.
+
+ estimate = GMMB_FJ(data[, parameters])
+ [estimate, stats] = GMMB_FJ(...)
+
+ Parameters (default):
+   maxloops    maximum number of loops per a CEM run (500)
+   Cmax    the maximum number of GMM components
+        set to -1 to use all data points as component means
+   Cmin    the minimum number of GMM components tried (1)
+   verbose    print some progress numbers (false)
+   thr        CEM2 threshold, relative loglikelihood change (1e-6)
+   animate    plot data and ellipses as the algorithm runs (false)
+   covtype    Covariance matrix structure: 1=diagonal, other=free (0)
+   broken    With complex data, calculate no. of component parameters
+        as with real data (true).
+ At least Cmax should be set explicitly.
+ Example:
+   estS = gmmb_fj(data, 'Cmax', 50, 'thr', 1e-9)
+
+ References:
+   [1] Duda, R.O., Hart, P.E, Stork, D.G, Pattern Classification,
+   2nd ed., John Wiley &amp; Sons, Inc., 2001.
+   [2] Bilmes, J.A., A Gentle Tutorial of the EM Algorithm and its
+    Application to Parameter Estimation for Gaussian Mixture and Hidden
+    Markov Models
+   International Computer Science Institute, 1998
+   [3] Figueiredo, M.A.T., Jain, A.K., Unsupervised Learning on
+    Finite Mixture Models, IEEE transactions of pattern analysis and
+    machine intelligence, vol.24, no3, March 2002
+
+ This code is directly based on [3] and code published on
+ Figueiredo homepage: http://www.lx.it.pt/~mtf/
+
+ Author(s):
+    Pekka Paalanen &lt;pekka.paalanen@lut.fi&gt;
+
+ Copyright:
+
+   Bayesian Classifier with Gaussian Mixture Model Pdf
+   functionality is Copyright (C) 2003 by Pekka Paalanen and
+   Joni-Kristian Kamarainen.
+
+   $Name:  $ $Revision: 1.2 $  $Date: 2004/11/02 09:00:18 $
+
+
+ Logging
+   parameters
+
+      logging   What kind of logging to do:
+        0 - no logging
+        1 - normal logging
+        2 - extra logging: store all intermediate mixtures
+      If the 'stats' output parameter is defined, then 'logging'
+      defaults to 1, otherwise it is forced to 0.
+
+  the 'stats' struct:
+      iterations: CEM (full) iteration count
+      costs:      iterations long vector of the cost value
+      annihilations: component annihilation log [annih, deletion]*iters
+      covfixer2:  iterations-by-C matrix of gmmb_covfixer fix round counts
+      loglikes:   iterations long vector of the log-likelihood
+    extra logging:
+      initialmix: parameters for the initial mixture
+      mixtures:   parameters for all intermediate mixtures</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="getargs.html" class="code" title="function S = getargs(defaultS, varglist);">getargs</a>	GETARGS  parse variable argument list into a struct</li><li><a href="gmmb_cmvnpdf.html" class="code" title="function y = gmmb_cmvnpdf(X, Mu, Sigma)">gmmb_cmvnpdf</a>	GMMB_CMVNPDF - Compute the value of Gaussian PDF (real or complex range)</li><li><a href="gmmb_covfixer.html" class="code" title="function [nsigma, varargout] = gmmb_covfixer(sigma);">gmmb_covfixer</a>	GMMB_COVFIXER   - force matrix to be a valid covariance matrix</li><li><a href="warning_wrap.html" class="code" title="function [] = warning_wrap(varargin);">warning_wrap</a>	WARNING_WRAP()  warning function wrapper</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="gmmb_create.html" class="code" title="function [bayesS, varargout] = gmmb_create(data, cl, method, varargin);">gmmb_create</a>	GMMB_CREATE - Construct new Bayesian classifier with Gaussian mixture model pdf</li></ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function h = my_plot_init;</a></li><li><a href="#_sub2" class="code">function my_plot_ellipses(h, data, mu, sigma, weight);</a></li></ul>
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">%GMMB_FJ     - Figueiredo-Jain estimated GMM parameters</span>
+0002 <span class="comment">% Produces a bayesS struct without 'apriories'.</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% Works with complex numbers directly.</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">% estimate = GMMB_FJ(data[, parameters])</span>
+0007 <span class="comment">% [estimate, stats] = GMMB_FJ(...)</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">% Parameters (default):</span>
+0010 <span class="comment">%   maxloops    maximum number of loops per a CEM run (500)</span>
+0011 <span class="comment">%   Cmax    the maximum number of GMM components</span>
+0012 <span class="comment">%        set to -1 to use all data points as component means</span>
+0013 <span class="comment">%   Cmin    the minimum number of GMM components tried (1)</span>
+0014 <span class="comment">%   verbose    print some progress numbers (false)</span>
+0015 <span class="comment">%   thr        CEM2 threshold, relative loglikelihood change (1e-6)</span>
+0016 <span class="comment">%   animate    plot data and ellipses as the algorithm runs (false)</span>
+0017 <span class="comment">%   covtype    Covariance matrix structure: 1=diagonal, other=free (0)</span>
+0018 <span class="comment">%   broken    With complex data, calculate no. of component parameters</span>
+0019 <span class="comment">%        as with real data (true).</span>
+0020 <span class="comment">% At least Cmax should be set explicitly.</span>
+0021 <span class="comment">% Example:</span>
+0022 <span class="comment">%   estS = gmmb_fj(data, 'Cmax', 50, 'thr', 1e-9)</span>
+0023 <span class="comment">%</span>
+0024 <span class="comment">% References:</span>
+0025 <span class="comment">%   [1] Duda, R.O., Hart, P.E, Stork, D.G, Pattern Classification,</span>
+0026 <span class="comment">%   2nd ed., John Wiley &amp; Sons, Inc., 2001.</span>
+0027 <span class="comment">%   [2] Bilmes, J.A., A Gentle Tutorial of the EM Algorithm and its</span>
+0028 <span class="comment">%    Application to Parameter Estimation for Gaussian Mixture and Hidden</span>
+0029 <span class="comment">%    Markov Models</span>
+0030 <span class="comment">%   International Computer Science Institute, 1998</span>
+0031 <span class="comment">%   [3] Figueiredo, M.A.T., Jain, A.K., Unsupervised Learning on</span>
+0032 <span class="comment">%    Finite Mixture Models, IEEE transactions of pattern analysis and</span>
+0033 <span class="comment">%    machine intelligence, vol.24, no3, March 2002</span>
+0034 <span class="comment">%</span>
+0035 <span class="comment">% This code is directly based on [3] and code published on</span>
+0036 <span class="comment">% Figueiredo homepage: http://www.lx.it.pt/~mtf/</span>
+0037 <span class="comment">%</span>
+0038 <span class="comment">% Author(s):</span>
+0039 <span class="comment">%    Pekka Paalanen &lt;pekka.paalanen@lut.fi&gt;</span>
+0040 <span class="comment">%</span>
+0041 <span class="comment">% Copyright:</span>
+0042 <span class="comment">%</span>
+0043 <span class="comment">%   Bayesian Classifier with Gaussian Mixture Model Pdf</span>
+0044 <span class="comment">%   functionality is Copyright (C) 2003 by Pekka Paalanen and</span>
+0045 <span class="comment">%   Joni-Kristian Kamarainen.</span>
+0046 <span class="comment">%</span>
+0047 <span class="comment">%   $Name:  $ $Revision: 1.2 $  $Date: 2004/11/02 09:00:18 $</span>
+0048 <span class="comment">%</span>
+0049 <span class="comment">%</span>
+0050 <span class="comment">% Logging</span>
+0051 <span class="comment">%   parameters</span>
+0052 <span class="comment">%</span>
+0053 <span class="comment">%      logging   What kind of logging to do:</span>
+0054 <span class="comment">%        0 - no logging</span>
+0055 <span class="comment">%        1 - normal logging</span>
+0056 <span class="comment">%        2 - extra logging: store all intermediate mixtures</span>
+0057 <span class="comment">%      If the 'stats' output parameter is defined, then 'logging'</span>
+0058 <span class="comment">%      defaults to 1, otherwise it is forced to 0.</span>
+0059 <span class="comment">%</span>
+0060 <span class="comment">%  the 'stats' struct:</span>
+0061 <span class="comment">%      iterations: CEM (full) iteration count</span>
+0062 <span class="comment">%      costs:      iterations long vector of the cost value</span>
+0063 <span class="comment">%      annihilations: component annihilation log [annih, deletion]*iters</span>
+0064 <span class="comment">%      covfixer2:  iterations-by-C matrix of gmmb_covfixer fix round counts</span>
+0065 <span class="comment">%      loglikes:   iterations long vector of the log-likelihood</span>
+0066 <span class="comment">%    extra logging:</span>
+0067 <span class="comment">%      initialmix: parameters for the initial mixture</span>
+0068 <span class="comment">%      mixtures:   parameters for all intermediate mixtures</span>
+0069 <span class="comment">%</span>
+0070 
+0071 <a name="_sub0" href="#_subfunctions" class="code">function [estimate, varargout] = gmmb_fj(data, varargin);</a>
+0072 
+0073 [N, D] = size(data);    <span class="comment">% number of points (n), dimensions (d)</span>
+0074 
+0075 <span class="comment">% defaults</span>
+0076 conf = struct(<span class="keyword">...</span>
+0077     <span class="string">'maxloops'</span>, 500, <span class="keyword">...</span>
+0078     <span class="string">'Cmax'</span>, ceil(min(50, N/(D*D)/3)), <span class="keyword">...</span>
+0079     <span class="string">'Cmin'</span>, 1, <span class="keyword">...</span>
+0080     <span class="string">'verbose'</span>, 0, <span class="keyword">...</span>
+0081     <span class="string">'thr'</span>, 1e-6, <span class="keyword">...</span>
+0082     <span class="string">'animate'</span>, 0, <span class="keyword">...</span>
+0083     <span class="string">'covtype'</span>, 0, <span class="keyword">...</span>
+0084     <span class="string">'broken'</span>, 1, <span class="keyword">...</span>
+0085     <span class="string">'logging'</span>, 0 <span class="keyword">...</span>
+0086     );
+0087 
+0088 <span class="keyword">if</span> nargout&gt;1
+0089     conf.logging = 1;
+0090     varargout{1} = [];
+0091 <span class="keyword">end</span>
+0092 
+0093 conf = <a href="getargs.html" class="code" title="function S = getargs(defaultS, varglist);">getargs</a>(conf, varargin);
+0094 
+0095 C = conf.Cmax;
+0096 
+0097 <span class="keyword">if</span> nargout&lt;2
+0098     conf.logging=0;
+0099 <span class="keyword">end</span>
+0100 
+0101 <span class="comment">% for logging</span>
+0102 log_covfixer2 = {};
+0103 log_loglikes = {};
+0104 log_costs = {};
+0105 log_annih = {};
+0106 log_initialmix = {};
+0107 log_mixtures = {};
+0108 
+0109 
+0110 <span class="keyword">if</span> (C&lt;1) | (C&gt;N)
+0111     C = N;
+0112     mu = data.';
+0113 <span class="keyword">else</span>
+0114     <span class="comment">% initialize mu as random points from data</span>
+0115     permi = randperm(N);
+0116     mu = data(permi(1:C),:).';  <span class="comment">% D x C</span>
+0117 <span class="keyword">end</span>
+0118 
+0119 
+0120 <span class="comment">% initialize sigma</span>
+0121 s2 = max(diag(<a href="gmmb_covfixer.html" class="code" title="function [nsigma, varargout] = gmmb_covfixer(sigma);">gmmb_covfixer</a>(cov(data,1))/10));
+0122 sigma = repmat(s2*eye(D), [1 1 C]);
+0123 
+0124 <span class="comment">% weights initialization</span>
+0125 alpha = ones(1,C) * (1/C);
+0126 
+0127 
+0128 log_initialmix = struct(<span class="keyword">...</span>
+0129     <span class="string">'weight'</span>, alpha, <span class="keyword">...</span>
+0130     <span class="string">'mu'</span>, mu, <span class="keyword">...</span>
+0131     <span class="string">'sigma'</span>, sigma);
+0132 
+0133 
+0134 <span class="comment">% the number of free parameters in a Gaussian</span>
+0135 <span class="keyword">if</span> isreal(data) | (conf.broken ~= 0)
+0136     <span class="keyword">if</span> conf.covtype == 1
+0137         Nparc = D+D;    <span class="comment">% (N)</span>
+0138     <span class="keyword">else</span>
+0139         Nparc = D+D*(D+1)/2;    <span class="comment">% (N)</span>
+0140     <span class="keyword">end</span>
+0141 <span class="keyword">else</span>
+0142     <span class="comment">% data is complex valued</span>
+0143     <span class="keyword">if</span> conf.covtype == 1
+0144         Nparc = 2*D + D;    <span class="comment">% (N)</span>
+0145     <span class="keyword">else</span>
+0146         Nparc = 2*D + D*D;    <span class="comment">% (N)</span>
+0147     <span class="keyword">end</span>
+0148 <span class="keyword">end</span>
+0149 Nparc2 = Nparc/2;
+0150 
+0151 N_limit = (Nparc+1)*3*conf.Cmin;
+0152 <span class="keyword">if</span> N &lt; N_limit
+0153     <a href="warning_wrap.html" class="code" title="function [] = warning_wrap(varargin);">warning_wrap</a>(<span class="string">'gmmb_fj:data_amount'</span>, <span class="keyword">...</span>
+0154        [<span class="string">'Training data may be insufficient for selected '</span> <span class="keyword">...</span>
+0155         <span class="string">'minimum number of components. '</span> <span class="keyword">...</span>
+0156         <span class="string">'Have: '</span> num2str(N) <span class="string">', recommended: &gt;'</span> num2str(N_limit) <span class="keyword">...</span>
+0157         <span class="string">' points.'</span>]);
+0158 <span class="keyword">end</span>
+0159 
+0160 
+0161 <span class="keyword">if</span> conf.animate ~= 0
+0162     aniH = my_plot_init;
+0163     <a href="#_sub2" class="code" title="subfunction my_plot_ellipses(h, data, mu, sigma, weight);">my_plot_ellipses</a>(aniH, data, mu, sigma, alpha);
+0164 <span class="keyword">end</span>
+0165 
+0166 
+0167 t = 0;
+0168 Cnz = C;    <span class="comment">% (k_nz) k = kmax</span>
+0169 Lmin = NaN;
+0170 
+0171 u = zeros(N,C);    <span class="comment">% semi_indic.'</span>
+0172 <span class="keyword">for</span> c = 1:C
+0173     u(:,c) = <a href="gmmb_cmvnpdf.html" class="code" title="function y = gmmb_cmvnpdf(X, Mu, Sigma)">gmmb_cmvnpdf</a>(data, mu(:,c).', sigma(:,:,c));
+0174 <span class="keyword">end</span>
+0175 indic = u .* repmat(alpha, N,1);
+0176 
+0177 old_loglike = sum(log(sum(realmin+indic, 2)));
+0178 old_L = Nparc2*sum(log(alpha)) + (Nparc2+0.5)*Cnz*log(N) - old_loglike;
+0179 
+0180 
+0181 <span class="keyword">while</span> Cnz &gt;= conf.Cmin
+0182     repeating = 1;
+0183     
+0184     fixing_cycles = 0;
+0185     loops = 0;
+0186     <span class="keyword">while</span> repeating
+0187         t = t+1;
+0188         loops = loops +1;
+0189         
+0190         fixed_on_this_round = 0;
+0191         log_covfixer2{t,1} = 0;
+0192         c = 1;
+0193         <span class="keyword">while</span> c &lt;= C
+0194             indic = u .* repmat(alpha, N,1);
+0195             normindic = indic ./ (realmin + repmat(sum(indic,2), 1,C));
+0196             
+0197             normf = 1/sum(normindic(:,c));
+0198             aux = repmat(normindic(:,c), 1,D) .* data;
+0199             
+0200             nmu = normf * sum(aux,1);
+0201             mu(:,c) = nmu.';
+0202             
+0203             <span class="keyword">if</span> conf.covtype == 1
+0204                 nsigma =  normf*diag(sum(aux .* conj(data), 1)) - diag(nmu.*conj(nmu));
+0205             <span class="keyword">else</span>
+0206                 nsigma =  normf*(aux' * data) - nmu'*nmu;
+0207             <span class="keyword">end</span>
+0208             [sigma(:,:,c) log_fixcount] = <a href="gmmb_covfixer.html" class="code" title="function [nsigma, varargout] = gmmb_covfixer(sigma);">gmmb_covfixer</a>(nsigma);
+0209             <span class="comment">% covfixer may change the matrix so that log-likelihood</span>
+0210             <span class="comment">% decreases. So, if covfixer changes something,</span>
+0211             <span class="comment">% disable the stop condition. If going into infinite</span>
+0212             <span class="comment">% fix/estimate -loop, quit.</span>
+0213 
+0214             <span class="keyword">if</span> conf.logging&gt;0
+0215                 <span class="comment">% the component indexes are not constants,</span>
+0216                 <span class="comment">% cannot record component-wise fix counts</span>
+0217                 log_covfixer2{t,1} = <span class="keyword">...</span>
+0218                    log_covfixer2{t,1} + log_fixcount;
+0219             <span class="keyword">end</span>
+0220             
+0221             alpha(c) = max(0, sum(normindic(:,c))-Nparc2) / N;
+0222             alpha = alpha / sum(alpha);
+0223             
+0224             <span class="keyword">if</span> ~all( isfinite(alpha(:)) )
+0225                 <span class="comment">% something went wrong</span>
+0226                 <span class="comment">% probably there is not enough data to</span>
+0227                 <span class="comment">%support estimation</span>
+0228                 <a href="warning_wrap.html" class="code" title="function [] = warning_wrap(varargin);">warning_wrap</a>(<span class="string">'gmmb_fj:weight_finity'</span>, <span class="string">'Mixture weights are no longer finite, aborting estimation.'</span>);
+0229                 alpha(:) = 0;
+0230                 Cnz = 0;
+0231                 repeating = 0;
+0232             <span class="keyword">end</span>
+0233 
+0234             <span class="keyword">if</span> alpha(c) == 0
+0235                 Cnz = Cnz -1;
+0236             <span class="keyword">else</span>
+0237                 <span class="keyword">if</span> log_fixcount ~= 0
+0238                     <span class="comment">% mark the covariance fix only,</span>
+0239                     <span class="comment">% if the component is not annihilated</span>
+0240                     fixed_on_this_round = 1;
+0241                 <span class="keyword">end</span>
+0242                 <span class="keyword">try</span>
+0243                     u(:,c) = <a href="gmmb_cmvnpdf.html" class="code" title="function y = gmmb_cmvnpdf(X, Mu, Sigma)">gmmb_cmvnpdf</a>( data, <span class="keyword">...</span>
+0244                        mu(:,c).', sigma(:,:,c) );
+0245                 <span class="keyword">catch</span>
+0246                     disp(<span class="string">'covariance went bzrk !!!'</span>);
+0247                     sigma(:,:,c)
+0248                     <span class="comment">%keyboard</span>
+0249                     Cnz = 0;
+0250                 <span class="keyword">end</span>
+0251             <span class="keyword">end</span>
+0252             c=c+1;
+0253             
+0254             <span class="keyword">if</span> Cnz &lt;= 0
+0255                 <span class="comment">% number of components fell to zero</span>
+0256                 <span class="comment">% nothing can be done</span>
+0257                 error(<span class="string">'Estimation failed, number of components fell to zero. Not enough training data?'</span>);
+0258             <span class="keyword">end</span>
+0259 
+0260         <span class="keyword">end</span> <span class="comment">% while c &lt;= C</span>
+0261 
+0262         <span class="comment">% purge alpha == 0 if necessary</span>
+0263         annihilated_count = length(find(alpha==0));
+0264         <span class="keyword">if</span> annihilated_count &gt; 0
+0265             nz = find(alpha&gt;0);
+0266             alpha = alpha(nz);
+0267             mu = mu(:,nz);
+0268             sigma = sigma(:,:,nz);
+0269             u = u(:,nz);
+0270             C = length(nz);
+0271         <span class="keyword">end</span>
+0272 
+0273         <span class="keyword">if</span> conf.animate ~= 0
+0274             <a href="#_sub2" class="code" title="subfunction my_plot_ellipses(h, data, mu, sigma, weight);">my_plot_ellipses</a>(aniH, data, mu, sigma, alpha);
+0275         <span class="keyword">end</span>
+0276         
+0277         u = zeros(N,C);    <span class="comment">% semi_indic.'</span>
+0278         <span class="keyword">for</span> c = 1:C
+0279             u(:,c) = <a href="gmmb_cmvnpdf.html" class="code" title="function y = gmmb_cmvnpdf(X, Mu, Sigma)">gmmb_cmvnpdf</a>(data, mu(:,c).', sigma(:,:,c));
+0280         <span class="keyword">end</span>
+0281         indic = u .* repmat(alpha, N,1);
+0282         
+0283         loglike = sum(log(realmin+sum(indic, 2)));
+0284         L = Nparc2*sum(log(alpha)) + (Nparc2+0.5)*Cnz*log(N) - loglike;
+0285 
+0286         
+0287         <span class="keyword">if</span> conf.verbose ~= 0
+0288             disp([<span class="string">'Cnz='</span> num2str(Cnz) <span class="string">' t='</span> num2str(t) <span class="string">' '</span><span class="keyword">...</span>
+0289                num2str(abs(loglike - old_loglike)) <span class="keyword">...</span>
+0290                <span class="string">' &lt;? '</span> num2str(conf.thr*abs(old_loglike))]);
+0291             disp([<span class="string">'t='</span> num2str(t) <span class="string">' L= '</span> num2str(L)]);
+0292         <span class="keyword">end</span>
+0293         
+0294         <span class="keyword">if</span> conf.logging&gt;0
+0295             log_loglikes{t} = loglike;
+0296             log_costs{t} = L;
+0297             log_annih{t} = [annihilated_count, 0];
+0298         <span class="keyword">end</span>
+0299         <span class="keyword">if</span> conf.logging&gt;1
+0300             log_mixtures{t} = struct(<span class="keyword">...</span>
+0301                 <span class="string">'weight'</span>, alpha, <span class="keyword">...</span>
+0302                 <span class="string">'mu'</span>, mu, <span class="keyword">...</span>
+0303                 <span class="string">'sigma'</span>, sigma);
+0304         <span class="keyword">end</span>
+0305 
+0306         <span class="keyword">if</span> fixed_on_this_round ~= 0
+0307             <span class="comment">% if any cov's were fixed, increase count and</span>
+0308             <span class="comment">% do not evaluate stopping threshold.</span>
+0309             fixing_cycles = fixing_cycles +1;
+0310             <span class="keyword">if</span> conf.verbose ~= 0
+0311                 disp([<span class="string">'fix cycle '</span> num2str(fixing_cycles)]);
+0312             <span class="keyword">end</span>
+0313         <span class="keyword">else</span>
+0314             <span class="comment">% no cov's were fixed this round, reset the counter</span>
+0315             <span class="comment">% and evaluate threshold.</span>
+0316             fixing_cycles = 0;
+0317             <span class="keyword">if</span> (abs(loglike/old_loglike -1) &lt; conf.thr)
+0318                 repeating = 0;
+0319             <span class="keyword">end</span>
+0320         <span class="keyword">end</span>
+0321         
+0322         old_L = L;
+0323         old_loglike = loglike;
+0324         
+0325         <span class="keyword">if</span> fixing_cycles &gt; 20
+0326             repeating = 0;
+0327         <span class="keyword">end</span>
+0328         <span class="keyword">if</span> loops &gt; conf.maxloops
+0329             repeating = 0;
+0330         <span class="keyword">end</span>
+0331     <span class="keyword">end</span> <span class="comment">% while repeating</span>
+0332     
+0333     <span class="keyword">if</span> isnan(Lmin) | (L &lt;= Lmin)
+0334         Lmin = L;
+0335         estimate = struct(<span class="string">'mu'</span>, mu,<span class="keyword">...</span>
+0336             <span class="string">'sigma'</span>, sigma,<span class="keyword">...</span>
+0337             <span class="string">'weight'</span>, alpha.');
+0338     <span class="keyword">end</span>
+0339     <span class="keyword">if</span> conf.verbose ~= 0
+0340         disp([<span class="string">'Cnz = '</span> num2str(Cnz)]);
+0341     <span class="keyword">end</span>
+0342 
+0343     <span class="comment">% annihilate the least probable component</span>
+0344     m = find(alpha == min(alpha(alpha&gt;0)));
+0345     alpha(m(1)) = 0;
+0346     Cnz = Cnz -1;
+0347     <span class="comment">% alpha doesn't need to be normalized here, even if it would seem logical to do so.</span>
+0348     
+0349     <span class="keyword">if</span> conf.logging &gt; 0
+0350         log_annih{t}(2) = 1;
+0351     <span class="keyword">end</span>
+0352     
+0353     <span class="keyword">if</span> Cnz &gt; 0
+0354         alpha = alpha / sum(alpha);
+0355     
+0356         <span class="comment">% purge alpha == 0 if necessary</span>
+0357         <span class="keyword">if</span> length(find(alpha==0)) &gt; 0
+0358             nz = find(alpha&gt;0);
+0359             alpha = alpha(nz);
+0360             mu = mu(:,nz);
+0361             sigma = sigma(:,:,nz);
+0362             u = u(:,nz);
+0363             C = length(nz);
+0364         <span class="keyword">end</span>
+0365         
+0366         u = zeros(N,C);    <span class="comment">% semi_indic.'</span>
+0367         <span class="keyword">for</span> c = 1:C
+0368             u(:,c) = <a href="gmmb_cmvnpdf.html" class="code" title="function y = gmmb_cmvnpdf(X, Mu, Sigma)">gmmb_cmvnpdf</a>(data, mu(:,c).', sigma(:,:,c));
+0369         <span class="keyword">end</span>
+0370         indic = u .* repmat(alpha, N,1);
+0371         
+0372         old_loglike = sum(log(realmin+sum(indic, 2)));
+0373         old_L = Nparc2*sum(log(alpha)) + (Nparc2+0.5)*Cnz*log(N) - old_loglike;
+0374     <span class="keyword">end</span>
+0375 <span class="keyword">end</span>
+0376 
+0377 
+0378 
+0379 <span class="keyword">if</span> conf.logging&gt;1
+0380     varargout{1} = struct(<span class="keyword">...</span>
+0381         <span class="string">'iterations'</span>, {t}, <span class="keyword">...</span>
+0382         <span class="string">'costs'</span>, {cat(1,log_costs{:})}, <span class="keyword">...</span>
+0383         <span class="string">'annihilations'</span>, {sparse(cat(1,log_annih{:}))}, <span class="keyword">...</span>
+0384         <span class="string">'covfixer2'</span>, {cat(1,log_covfixer2{:})}, <span class="keyword">...</span>
+0385         <span class="string">'loglikes'</span>, {cat(1,log_loglikes{:})}, <span class="keyword">...</span>
+0386         <span class="string">'initialmix'</span>, {log_initialmix}, <span class="keyword">...</span>
+0387         <span class="string">'mixtures'</span>, {log_mixtures});
+0388 <span class="keyword">end</span>
+0389 <span class="keyword">if</span> conf.logging == 1
+0390     varargout{1} = struct(<span class="keyword">...</span>
+0391         <span class="string">'iterations'</span>, {t}, <span class="keyword">...</span>
+0392         <span class="string">'costs'</span>, {cat(1,log_costs{:})}, <span class="keyword">...</span>
+0393         <span class="string">'annihilations'</span>, {sparse(cat(1,log_annih{:}))}, <span class="keyword">...</span>
+0394         <span class="string">'covfixer2'</span>, {cat(1,log_covfixer2{:})}, <span class="keyword">...</span>
+0395         <span class="string">'loglikes'</span>, {cat(1,log_loglikes{:})} <span class="keyword">...</span>
+0396         );
+0397 <span class="keyword">end</span>
+0398 
+0399 
+0400 <span class="comment">% purge alpha==0</span>
+0401 e = estimate;
+0402 inds = find(e.weight&gt;0);
+0403 estimate.mu = e.mu(:,inds);
+0404 estimate.sigma = e.sigma(:,:,inds);
+0405 estimate.weight = e.weight(inds);
+0406 
+0407 <span class="keyword">if</span> conf.animate ~= 0
+0408     <a href="#_sub2" class="code" title="subfunction my_plot_ellipses(h, data, mu, sigma, weight);">my_plot_ellipses</a>(aniH, data, estimate.mu, estimate.sigma, estimate.weight);
+0409 <span class="keyword">end</span>
+0410 
+0411 <span class="comment">%disp(['Cfinal = ' num2str(length(inds))]);</span>
+0412 
+0413 <span class="comment">% -----------------------------------------------------------</span>
+0414 
+0415 <a name="_sub1" href="#_subfunctions" class="code">function h = my_plot_init;</a>
+0416 h = figure;
+0417 figure(h);
+0418 title(<span class="string">'Distribution of x_1 and x_2 values'</span>,<span class="string">'FontSize'</span>,14);
+0419 xlabel(<span class="string">'x_1 value'</span>,<span class="string">'FontSize'</span>,14);
+0420 ylabel(<span class="string">'x_2 value'</span>,<span class="string">'FontSize'</span>,14);
+0421 zlabel(<span class="string">'weight'</span>,<span class="string">'FontSize'</span>,14);
+0422 view(2)
+0423 tic;
+0424 
+0425 <a name="_sub2" href="#_subfunctions" class="code">function my_plot_ellipses(h, data, mu, sigma, weight);</a>
+0426 dtime = 0.3;
+0427 
+0428 D = size(mu, 1);
+0429 
+0430 <span class="keyword">if</span> D ~= 2
+0431     error(<span class="string">'Can plot only 2D objects.'</span>);
+0432 <span class="keyword">end</span>
+0433 
+0434 [x,y,z] = cylinder([2 2], 40);
+0435 xy = [ x(1,:) ; y(1,:) ];
+0436 
+0437 figure(h);
+0438 
+0439 plot(data(:,1), data(:,2), <span class="string">'rx'</span>);
+0440 
+0441 hold on
+0442 C = size(mu, 2);
+0443 <span class="keyword">for</span> c = 1:C
+0444     mxy = chol(sigma(:,:,c))' * xy;
+0445     x = mxy(1,:) + mu(1,c);
+0446     y = mxy(2,:) + mu(2,c);
+0447     z = ones(size(x))*weight(c);
+0448     plot3(x,y,z, <span class="string">'k-'</span>);
+0449 <span class="keyword">end</span>
+0450 drawnow;
+0451 hold off
+0452 
+0453 t = toc;
+0454 <span class="keyword">if</span> t+0.01&lt;dtime
+0455     pause(dtime-t);
+0456 <span class="keyword">end</span>
+0457 tic
+0458</pre></div>
+<hr><address>Generated on Thu 14-Apr-2005 13:50:22 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>
